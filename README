@@ -1,11 +1,11 @@
-Code source d'une interface de téléchargement des épisodes du podcast GeekInc (http://www.geekinc.fr/) sur la freebox V6.
+Code source d'une interface de tÃ©lÃ©chargement des Ã©pisodes du podcast GeekInc (http://www.geekinc.fr/) sur la freebox V6.
 
-L'idée est de permettre de lancer le téléchargement des podcasts directement sur la seedbox (http://mafreebox.freebox.fr/download.php) de la nouvelle freebox sans avoir à attendre devant votre ordinateur.
-Quand l'épisode est disponible, vous n'avez plus qu'à aller le regarder via le freebox player (l'épisode arrive dans /Disque Dur/Téléchargements).
+L'idÃ©e est de permettre de lancer le tÃ©lÃ©chargement des podcasts directement sur la seedbox (http://mafreebox.freebox.fr/download.php) de la nouvelle freebox sans avoir Ã  attendre devant votre ordinateur.
+Quand l'Ã©pisode est disponible, vous n'avez plus qu'Ã  aller le regarder via le freebox player (l'Ã©pisode arrive dans /Disque Dur/TÃ©lÃ©chargements).
 
 Cette interface est la version Android du programme.
 
-Elle utilise la bibliothèque de gestion d'erreurs ACRA (http://code.google.com/p/acra/).
+Elle utilise la bibliothÃ¨que de gestion d'erreurs ACRA (http://code.google.com/p/acra/).
 Pour la configuration d'ACRA, voir la doc : http://code.google.com/p/acra/wiki/BasicSetup
 
 Pour l'utiliser :
@@ -14,7 +14,7 @@ Pour l'utiliser :
   pour ajouter la formkey de votre spreadsheet ACRA (@ReportsCrashes( formKey = "XXXX"))
 
 
-Icône de l'application :
+IcÃ´ne de l'application :
   "Hornet Icon Set" 
 
   Author: http://878952.deviantart.com/
