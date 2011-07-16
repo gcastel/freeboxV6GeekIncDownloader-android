@@ -1,1 +1,23 @@
-TODO :)
+Code source d'une interface de téléchargement des épisodes du podcast GeekInc (http://www.geekinc.fr/) sur la freebox V6.
+
+L'idée est de permettre de lancer le téléchargement des podcasts directement sur la seedbox (http://mafreebox.freebox.fr/download.php) de la nouvelle freebox sans avoir à attendre devant votre ordinateur.
+Quand l'épisode est disponible, vous n'avez plus qu'à aller le regarder via le freebox player (l'épisode arrive dans /Disque Dur/Téléchargements).
+
+Cette interface est la version Android du programme.
+
+Elle utilise la bibliothèque de gestion d'erreurs ACRA (http://code.google.com/p/acra/).
+Pour la configuration d'ACRA, voir la doc : http://code.google.com/p/acra/wiki/BasicSetup
+
+Pour l'utiliser :
+- importez le projet dans eclipse
+- Modifiez le fichier fr/gcastel/freeboxV6GeekIncDownloader/FbxV6GeekIncDownloaderApplication.java
+  pour ajouter la formkey de votre spreadsheet ACRA (@ReportsCrashes( formKey = "XXXX"))
+
+
+Icône de l'application :
+  "Hornet Icon Set" 
+
+  Author: http://878952.deviantart.com/
+
+  This work is licensed under a Creative Commons Attribution-Noncommercial-No Derivative Works 3.0 License.
+  http://creativecommons.org/licenses/by-nc-nd/3.0/
