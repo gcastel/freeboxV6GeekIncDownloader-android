@@ -68,8 +68,10 @@ public class ListPodcastAdapter extends BaseAdapter {
 				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						EditText passField = (EditText) textEntryView.findViewById(R.id.passwordField);  
-						fbxService.execute(url, passField.getText().toString());
+						EditText passField = (EditText) textEntryView.findViewById(R.id.passwordField); 
+						if (fbxService.getStatus() == AsyncTask.Status.PENDING) {
+                                                  fbxService.execute(url, passField.getText().toString());
+						}
 					}
 				});
 		dialogBuilder.setNegativeButton("Annuler", null);
