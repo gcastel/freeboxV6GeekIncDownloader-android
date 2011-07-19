@@ -24,12 +24,14 @@ public class GeekIncRSSParserService {
     List<String> itemsList = new ArrayList<String>();
     int posEnCours = 0;
     int nextPos;
-    
-    while ( (nextPos = rssContent.indexOf("<item>", posEnCours)) != -1) {
-      int endPos = rssContent.indexOf("</item>", nextPos);
-      String itemEnCours = rssContent.substring(nextPos,endPos);
-      itemsList.add(itemEnCours);
-      posEnCours = endPos + "<item>".length();
+   
+    if (rssContent != null) {
+      while ( (nextPos = rssContent.indexOf("<item>", posEnCours)) != -1) {
+        int endPos = rssContent.indexOf("</item>", nextPos);
+        String itemEnCours = rssContent.substring(nextPos,endPos);
+        itemsList.add(itemEnCours);
+        posEnCours = endPos + "<item>".length();
+      }
     }
     
     return itemsList;
