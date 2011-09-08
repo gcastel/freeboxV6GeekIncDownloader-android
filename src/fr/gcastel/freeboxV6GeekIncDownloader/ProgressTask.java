@@ -126,19 +126,27 @@ public class ProgressTask extends AsyncTask<Void, Void, Void> {
     publishProgress();
 
     // Parsing
-    String logoURL = getGeekIncLogoURL();
+    String logoURL = null;
+    try {
+      logoURL = getGeekIncLogoURL();
+    } catch (Exception ex) {
+      Log.w("ProgressTask", "HTTP request error when getting logo");
+      return (null);
+    }
     progress += 10;
     publishProgress();
 
     // Récupération du logo GeekInc
-    Log.i("ProgressTask", "URL trouvée : " + logoURL);
-    GeekIncLogoDownloadService downService = new GeekIncLogoDownloadService(
+    if (logoURL != null) {
+      Log.i("ProgressTask", "URL trouvée : " + logoURL);
+      GeekIncLogoDownloadService downService = new GeekIncLogoDownloadService(
         logoURL, logoDataPath + logoFileName);
-    try {
-      downService.download();
-    } catch (Exception ex) {
-      Log.w("ProgressTask", "HTTP download error " + ex.getMessage());
-      return (null);
+      try {
+        downService.download();
+      } catch (Exception ex) {
+        Log.w("ProgressTask", "HTTP download error " + ex.getMessage());
+        return (null);
+      }
     }
     progress += 30;
     publishProgress();
