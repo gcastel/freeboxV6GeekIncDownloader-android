@@ -119,6 +119,7 @@ public class ProgressTask extends AsyncTask<Void, Void, Void> {
     try {
       fetchFluxRSS();
     } catch (Exception ex) {
+    	fluxRSS = null;
       Log.w("ProgressTask", "HTTP request error");
       return (null);
     }
@@ -130,6 +131,7 @@ public class ProgressTask extends AsyncTask<Void, Void, Void> {
     try {
       logoURL = getGeekIncLogoURL();
     } catch (Exception ex) {
+    	fluxRSS = null;    	
       Log.w("ProgressTask", "HTTP request error when getting logo");
       return (null);
     }
@@ -144,6 +146,7 @@ public class ProgressTask extends AsyncTask<Void, Void, Void> {
       try {
         downService.download();
       } catch (Exception ex) {
+      	fluxRSS = null;
         Log.w("ProgressTask", "HTTP download error " + ex.getMessage());
         return (null);
       }
@@ -155,7 +158,13 @@ public class ProgressTask extends AsyncTask<Void, Void, Void> {
 
     progress += 20;
     GeekIncRSSParserService parser = new GeekIncRSSParserService(fluxRSS);
-    podcastElements = parser.getPodcastElements();
+    try {
+      podcastElements = parser.getPodcastElements();
+    } catch (Exception ex) {
+    	fluxRSS = null;
+      Log.w("ProgressTask", "HTTP download error " + ex.getMessage());
+      return (null);
+    }
     publishProgress();
 
     return (null);
@@ -211,3 +220,4 @@ public class ProgressTask extends AsyncTask<Void, Void, Void> {
     return fluxRSS;
   }
 }
+
