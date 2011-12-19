@@ -190,6 +190,8 @@ public class ProgressTask extends AsyncTask<Void, Void, Void> {
             Toast.LENGTH_SHORT).show();
         if (activity.dialog != null) {
           activity.dialog.hide();
+	  // Pour permettre de relancer le rechargement
+	  activity.dialog = null;
         }
       }
     } else {
