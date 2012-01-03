@@ -49,7 +49,6 @@ public class GeekIncRssListActivity extends Activity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
- //   ExceptionHandler.register(this, "http://gcastel.sdf-eu.org/android/stacks.php");
     setContentView(R.layout.main);
 
     // Le logo est-il présent
