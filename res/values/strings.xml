@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">freeboxV6GeekIncDownloader</string>
-    <string name="app_version">1.3</string>
+    <string name="app_version">1.6</string>
     <string name="app_url">http://geeketfier.free.fr</string>    
     <string name="dataPath">/fr.gcastel.freeboxV6GeekIncDownloader/</string>
     <string name="geekIncLogoFileName">geekIncLogo.png</string>
