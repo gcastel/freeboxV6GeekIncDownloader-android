@@ -19,11 +19,13 @@ public class PodcastElement {
 
   private final String titre;
   private final String url;
+  private final String date;
   
-  public PodcastElement(String titre, String url) {
+  public PodcastElement(String titre, String url, String date) {
     super();
     this.titre = titre;
     this.url = url;
+    this.date = date;
   }
 
   public String getTitre() {
@@ -34,5 +36,8 @@ public class PodcastElement {
     return url;
   }
   
+  public String getDate() {
+  	return date;
+  }
   
 }

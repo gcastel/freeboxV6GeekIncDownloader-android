@@ -95,16 +95,23 @@ public class ListPodcastAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
-		TextView title;
+		TextView title, date;
 		if (convertView == null) {
 			convertView = layoutInflater.inflate(R.layout.list_item, parent,
 					false);
-			convertView.setTag(convertView.findViewById(R.id.titleItem));
+			convertView.setTag(new ListElementTagContainer(
+					         (TextView)convertView.findViewById(R.id.titleItem),
+					         (TextView)convertView.findViewById(R.id.dateItem)));
 		}
-		title = (TextView) convertView.getTag();
+		
+		title = ((ListElementTagContainer)convertView.getTag()).getTitleView();
+		date = ((ListElementTagContainer)convertView.getTag()).getDateView();
 
 		title.setText(elements.get(position).getTitre());
-		title.setOnClickListener(new View.OnClickListener() {
+		date.setText(elements.get(position).getDate());
+		
+		
+		convertView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				// Une tâche ne peut être exécutée qu'une fois

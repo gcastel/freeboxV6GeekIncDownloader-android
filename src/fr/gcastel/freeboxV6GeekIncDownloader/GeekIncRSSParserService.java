@@ -15,7 +15,11 @@
 */
 package fr.gcastel.freeboxV6GeekIncDownloader;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -25,6 +29,9 @@ import java.util.List;
 public class GeekIncRSSParserService {
 
   private final String rssContent;
+  private final DateFormat dateParser = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z");
+  private final DateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+  
   
   public GeekIncRSSParserService(String rssContent) {
     this.rssContent = rssContent;
@@ -66,10 +73,30 @@ public class GeekIncRSSParserService {
       int endUrlPos = itemContent.indexOf("\"", urlPos);
       String url = itemContent.substring(urlPos, endUrlPos);
       
-      PodcastElement element = new PodcastElement(titre, url);
+      int datePos = itemContent.indexOf("<pubDate>") + "<pubDate>".length();
+      int endDatePos = itemContent.indexOf("</pubDate>", datePos);
+      String dateToParse = itemContent.substring(datePos,endDatePos);
+      
+      PodcastElement element = new PodcastElement(titre, url, formatDate(dateToParse));
       result.add(element);
     }
     
     return result;
+  }
+  
+  /**
+   * Permet de parser la date de l'élément de flux RSS
+   * 
+   * @param inDate la date au format : "Thu, 16 Feb 2012 23:01:07 +0100"
+   * @return la chaîne à afficher dans le programme
+   */
+  private String formatDate(String inDate) {
+  	try {
+  	  Date datePub = dateParser.parse(inDate);
+  	  return dateFormatter.format(datePub);
+  	} catch (ParseException pe) {
+  		// C'est pas dramatique, on le cache à l'utilisateur
+  		return "";
+  	}
   }
 }
