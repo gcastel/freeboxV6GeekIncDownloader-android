@@ -7,4 +7,5 @@
     <string name="geekIncLogoFileName">geekIncLogo.png</string>
     <string name="geekIncRSSFeedURL">http://feeds.feedburner.com/GeekIncHD</string>
     <string name="freeboxURL">http://mafreebox.freebox.fr</string>
+    <string name="emptyRSSList">Aucun épisode trouvé</string>
 </resources>

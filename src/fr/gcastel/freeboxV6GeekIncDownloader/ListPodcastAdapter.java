@@ -124,4 +124,14 @@ public class ListPodcastAdapter extends BaseAdapter {
 		
 		return convertView;
 	}
+	
+
+	@Override
+	public boolean isEmpty() {
+		if (elements == null) {
+			return true;
+		}
+		return elements.isEmpty();
+	}
+
 }

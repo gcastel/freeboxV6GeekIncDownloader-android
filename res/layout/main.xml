@@ -2,8 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    >
-<ImageView android:layout_height="wrap_content" android:src="@drawable/icon" android:layout_width="wrap_content" android:id="@+id/geekIncHDLogo" android:layout_gravity="center" android:visibility="invisible"></ImageView>
-<ListView android:layout_height="fill_parent" android:layout_width="fill_parent" android:id="@+id/RSSContentList"></ListView>
+    android:layout_height="fill_parent">
+   <ImageView android:layout_height="wrap_content" android:src="@drawable/icon" android:layout_width="wrap_content" android:id="@+id/geekIncHDLogo" android:layout_gravity="center" android:visibility="invisible"></ImageView>
+   <ListView android:layout_height="fill_parent" android:layout_width="fill_parent" android:id="@android:id/list"></ListView>
+   <ViewStub android:id="@android:id/empty"
+          android:layout_width="fill_parent"
+          android:layout_height="fill_parent"
+          android:layout_gravity="center"
+          android:layout="@layout/empty" />
 </LinearLayout>

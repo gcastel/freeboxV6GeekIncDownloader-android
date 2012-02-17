@@ -15,17 +15,17 @@ public final class R {
         public static final int icon=0x7f020001;
     }
     public static final class id {
-        public static final int RSSContentList=0x7f060002;
-        public static final int aboutButton=0x7f060005;
+        public static final int aboutButton=0x7f060004;
         public static final int geekIncHDLogo=0x7f060001;
-        public static final int passwordField=0x7f060003;
-        public static final int refreshButton=0x7f060004;
+        public static final int passwordField=0x7f060002;
+        public static final int refreshButton=0x7f060003;
         public static final int titleItem=0x7f060000;
     }
     public static final class layout {
-        public static final int list_item=0x7f030000;
-        public static final int main=0x7f030001;
-        public static final int password_dialog=0x7f030002;
+        public static final int empty=0x7f030000;
+        public static final int list_item=0x7f030001;
+        public static final int main=0x7f030002;
+        public static final int password_dialog=0x7f030003;
     }
     public static final class menu {
         public static final int menu=0x7f050000;
@@ -35,6 +35,7 @@ public final class R {
         public static final int app_url=0x7f040002;
         public static final int app_version=0x7f040001;
         public static final int dataPath=0x7f040003;
+        public static final int emptyRSSList=0x7f040007;
         public static final int freeboxURL=0x7f040006;
         public static final int geekIncLogoFileName=0x7f040004;
         public static final int geekIncRSSFeedURL=0x7f040005;

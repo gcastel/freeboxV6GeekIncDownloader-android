@@ -18,8 +18,8 @@ package fr.gcastel.freeboxV6GeekIncDownloader;
 import java.io.File;
 import java.util.List;
 
-import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.graphics.BitmapFactory;
@@ -30,14 +30,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ListView;
 
 /**
  * L'activité principale de l'application
  * 
  * @author Gerben
  */
-public class GeekIncRssListActivity extends Activity {
+public class GeekIncRssListActivity extends ListActivity {
   protected ProgressDialog dialog = null; 
   protected ProgressTask task = null;
   private String fluxRSS = null;
@@ -226,7 +225,6 @@ public class GeekIncRssListActivity extends Activity {
     }
 
     // Mise en place de la liste
-    ListView listView = (ListView)findViewById(R.id.RSSContentList);
-    listView.setAdapter(new ListPodcastAdapter(this, podcastElements));
+    setListAdapter(new ListPodcastAdapter(this, podcastElements));
   }
 }
