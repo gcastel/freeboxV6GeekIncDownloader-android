@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Le parser du flux RSS (parser à l'ancienne) 
@@ -29,7 +30,7 @@ import java.util.List;
 public class GeekIncRSSParserService {
 
   private final String rssContent;
-  private final DateFormat dateParser = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z");
+  private final DateFormat dateParser = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
   private final DateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
   
   
