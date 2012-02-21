@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">freeboxV6GeekIncDownloader</string>
-    <string name="app_version">1.6</string>
     <string name="app_url">http://geeketfier.free.fr</string>    
-    <string name="dataPath">/fr.gcastel.freeboxV6GeekIncDownloader/</string>
+    <string name="dataPath">/Android/data/fr.gcastel.freeboxV6GeekIncDownloader/files/</string>
     <string name="geekIncLogoFileName">geekIncLogo.png</string>
     <string name="geekIncRSSFeedURL">http://feeds.feedburner.com/GeekIncHD</string>
     <string name="freeboxURL">http://mafreebox.freebox.fr</string>
