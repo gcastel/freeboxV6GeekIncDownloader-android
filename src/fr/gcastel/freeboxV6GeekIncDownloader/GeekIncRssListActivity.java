@@ -22,6 +22,8 @@ import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
@@ -118,8 +120,15 @@ public class GeekIncRssListActivity extends ListActivity {
       return true;
     case R.id.aboutButton:
       AlertDialog.Builder alertbox = new AlertDialog.Builder(this);
+      String versionName = null;
+      try {
+        PackageInfo pinfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+        versionName = pinfo.versionName;
+      } catch (NameNotFoundException nnfe) {
+        versionName = "";
+      }
       alertbox.setMessage(
-          getString(R.string.app_name) + " v" + getString(R.string.app_version) + "\n\n" +
+          getString(R.string.app_name) + " v" + versionName + "\n\n" +
           "(c) Gerben Castel 2011\n" +
           getString(R.string.app_url) + "\n\nIcône :\n\"Hornet Icon Set\"\n(CC BY-NC-ND 3.0)\nhttp://878952.deviantart.com/");
       alertbox.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
