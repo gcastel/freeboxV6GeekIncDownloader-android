@@ -35,15 +35,25 @@ public class GeekIncLogoDownloadService {
   public GeekIncLogoDownloadService(String url, String path) {
     try {
       toDownload = new URL(url);
-      outFile = new File(Environment.getExternalStorageDirectory(), path);
-      // Création des répertoires si nécessaire
-      String filePath = outFile.getPath();
-      File destDir = new File(filePath.substring(0,filePath.lastIndexOf('/')));
-      if (!destDir.exists()) {
-        destDir.mkdirs();
-      }
     } catch(MalformedURLException mue) {
       toDownload = null;
+    }
+ 
+    // ------
+    // Migration des anciennes versions : on supprime le vieux répertoire de cache
+    File oldFile = new File(Environment.getExternalStorageDirectory(), "/fr.gcastel.freeboxV6GeekIncDownloader/geekIncLogo.png");
+    oldFile.delete();
+    File oldDir = new File(Environment.getExternalStorageDirectory(), "/fr.gcastel.freeboxV6GeekIncDownloader");
+    oldDir.delete();
+    // ------      
+      
+    outFile = new File(Environment.getExternalStorageDirectory(), path);
+      
+    // Création des répertoires si nécessaire
+    String filePath = outFile.getPath();
+    File destDir = new File(filePath.substring(0,filePath.lastIndexOf('/')));
+    if (!destDir.exists()) {
+      destDir.mkdirs();
     }
   }
   

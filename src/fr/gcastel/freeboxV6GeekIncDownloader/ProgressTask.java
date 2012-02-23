@@ -120,7 +120,7 @@ public class ProgressTask extends AsyncTask<Void, Void, Void> {
       fetchFluxRSS();
     } catch (Exception ex) {
     	fluxRSS = null;
-      Log.w("ProgressTask", "HTTP request error");
+      Log.w("ProgressTask", "HTTP request error : " + ex.getMessage());
       return (null);
     }
     progress += 40;
@@ -190,8 +190,8 @@ public class ProgressTask extends AsyncTask<Void, Void, Void> {
             Toast.LENGTH_SHORT).show();
         if (activity.dialog != null) {
           activity.dialog.hide();
-	  // Pour permettre de relancer le rechargement
-	  activity.dialog = null;
+	        // Pour permettre de relancer le rechargement
+	        activity.dialog = null;
         }
       }
     } else {
@@ -222,4 +222,3 @@ public class ProgressTask extends AsyncTask<Void, Void, Void> {
     return fluxRSS;
   }
 }
-
