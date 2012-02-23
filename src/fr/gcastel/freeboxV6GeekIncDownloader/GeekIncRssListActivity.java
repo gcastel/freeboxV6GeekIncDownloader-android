@@ -77,7 +77,15 @@ public class GeekIncRssListActivity extends ListActivity {
       }
     } else {
       task.attach(this);
-      int oldProgress = dialog.getProgress(); 
+      int oldProgress = 0;
+      
+      // On gère le cas d'un changement d'activité / rotation d'écran
+      // avant la création du dialogue
+      if (dialog != null) {
+      	oldProgress = dialog.getProgress(); 
+      }
+      
+      // Si le dialogue doit encore être affiché, on le recrée
       if (oldProgress < 100) {
         // Nouveau dialogue lié à cette activité
         dialog = new ProgressDialog(this);
