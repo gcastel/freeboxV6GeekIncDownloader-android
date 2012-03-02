@@ -44,7 +44,6 @@ public class ProgressTask extends AsyncTask<Void, Void, Void> {
   private int progress = 0;
   private String fluxRSS = null;
   private List<PodcastElement> podcastElements;
-  private final String logoDataPath;
   private final String logoFileName;
 
   /**
@@ -55,7 +54,6 @@ public class ProgressTask extends AsyncTask<Void, Void, Void> {
   ProgressTask(GeekIncRssListActivity activity) {
     super();
     dialog = activity.dialog;
-    logoDataPath = activity.getString(R.string.dataPath);
     logoFileName = activity.getString(R.string.geekIncLogoFileName);
     attach(activity);
   }
@@ -142,7 +140,7 @@ public class ProgressTask extends AsyncTask<Void, Void, Void> {
     if (logoURL != null) {
       Log.i("ProgressTask", "URL trouvée : " + logoURL);
       GeekIncLogoDownloadService downService = new GeekIncLogoDownloadService(
-        logoURL, logoDataPath + logoFileName);
+        logoURL,  activity.getCacheDir(), logoFileName);
       try {
         downService.download();
       } catch (Exception ex) {

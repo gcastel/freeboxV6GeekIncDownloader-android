@@ -26,7 +26,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -53,8 +52,7 @@ public class GeekIncRssListActivity extends ListActivity {
     setContentView(R.layout.main);
 
     // Le logo est-il présent
-    File geekIncLogoFile = new File(Environment.getExternalStorageDirectory(),
-        getString(R.string.dataPath) + getString(R.string.geekIncLogoFileName));
+    File geekIncLogoFile = new File(getCacheDir(), getString(R.string.geekIncLogoFileName));
     if (geekIncLogoFile.exists()) {
       loadImageInView(geekIncLogoFile);
     }
@@ -234,9 +232,8 @@ public class GeekIncRssListActivity extends ListActivity {
   void updateView() {
     // Le logo est-il présent
     File geekIncLogoFile = new File(
-        Environment.getExternalStorageDirectory(),
-        getString(R.string.dataPath)
-            + getString(R.string.geekIncLogoFileName));
+        getCacheDir(),
+        getString(R.string.geekIncLogoFileName));
     if (geekIncLogoFile.exists()) {
       loadImageInView(geekIncLogoFile);
     }

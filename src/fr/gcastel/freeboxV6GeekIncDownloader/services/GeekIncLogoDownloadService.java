@@ -32,7 +32,7 @@ public class GeekIncLogoDownloadService {
   private URL toDownload;
   private File outFile;
   
-  public GeekIncLogoDownloadService(String url, String path) {
+  public GeekIncLogoDownloadService(String url, File cacheDir, String logoFile) {
     try {
       toDownload = new URL(url);
     } catch(MalformedURLException mue) {
@@ -45,16 +45,17 @@ public class GeekIncLogoDownloadService {
     oldFile.delete();
     File oldDir = new File(Environment.getExternalStorageDirectory(), "/fr.gcastel.freeboxV6GeekIncDownloader");
     oldDir.delete();
+    // ------
+    // Migration des anciennes versions : on supprime le vieux répertoire de cache
+    oldFile = new File(Environment.getExternalStorageDirectory(), "/Android/data/fr.gcastel.freeboxV6GeekIncDownloader/files/geekIncLogo.png");
+    oldFile.delete();
+    oldDir = new File(Environment.getExternalStorageDirectory(), "/Android/data/fr.gcastel.freeboxV6GeekIncDownloader/files/");
+    oldDir.delete();
+    oldDir = new File(Environment.getExternalStorageDirectory(), "/Android/data/fr.gcastel.freeboxV6GeekIncDownloader/");
+    oldDir.delete();
     // ------      
-      
-    outFile = new File(Environment.getExternalStorageDirectory(), path);
-      
-    // Création des répertoires si nécessaire
-    String filePath = outFile.getPath();
-    File destDir = new File(filePath.substring(0,filePath.lastIndexOf('/')));
-    if (!destDir.exists()) {
-      destDir.mkdirs();
-    }
+    
+    outFile = new File(cacheDir, logoFile);
   }
   
   public void download() throws Exception {
