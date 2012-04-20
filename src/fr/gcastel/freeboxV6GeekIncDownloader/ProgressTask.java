@@ -53,7 +53,7 @@ public class ProgressTask extends AsyncTask<Void, Void, Void> {
    */
   ProgressTask(GeekIncRssListActivity activity) {
     super();
-    dialog = activity.dialog;
+    dialog = activity.listController.getDialog();
     logoFileName = activity.getString(R.string.geekIncLogoFileName);
     attach(activity);
   }
@@ -171,7 +171,7 @@ public class ProgressTask extends AsyncTask<Void, Void, Void> {
   @Override
   protected void onProgressUpdate(Void... unused) {
     if (activity != null) {
-      activity.updateProgress(getProgress(), podcastElements, fluxRSS);
+      activity.listController.updateProgress(activity, getProgress(), podcastElements, fluxRSS);
     } else {
       Log.w("ProgressTask", "onProgressUpdate skipped, no activity");
     }
@@ -186,10 +186,10 @@ public class ProgressTask extends AsyncTask<Void, Void, Void> {
         Toast.makeText(activity,
             "Impossible de récupérer le flux RSS de GeekInc HD !",
             Toast.LENGTH_SHORT).show();
-        if (activity.dialog != null) {
-          activity.dialog.hide();
+        if (activity.listController.getDialog() != null) {
+          activity.listController.getDialog().hide();
 	        // Pour permettre de relancer le rechargement
-	        activity.dialog = null;
+	        activity.listController.setDialog(null);
         }
       }
     } else {
@@ -198,13 +198,13 @@ public class ProgressTask extends AsyncTask<Void, Void, Void> {
   }
 
   void detach() {
-    dialog = activity.dialog;
+    dialog = activity.listController.getDialog();
     activity = null;
   }
 
   protected void attach(GeekIncRssListActivity inActivity) {
     activity = inActivity;
-    activity.dialog = dialog;
+    activity.listController.setDialog(dialog);
   }
 
   public int getProgress() {

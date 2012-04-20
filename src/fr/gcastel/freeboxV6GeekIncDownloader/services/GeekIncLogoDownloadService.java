@@ -25,7 +25,6 @@ import java.net.URLConnection;
 
 import org.apache.http.util.ByteArrayBuffer;
 
-import android.os.Environment;
 import android.util.Log;
 
 public class GeekIncLogoDownloadService {
@@ -38,23 +37,7 @@ public class GeekIncLogoDownloadService {
     } catch(MalformedURLException mue) {
       toDownload = null;
     }
- 
-    // ------
-    // Migration des anciennes versions : on supprime le vieux répertoire de cache
-    File oldFile = new File(Environment.getExternalStorageDirectory(), "/fr.gcastel.freeboxV6GeekIncDownloader/geekIncLogo.png");
-    oldFile.delete();
-    File oldDir = new File(Environment.getExternalStorageDirectory(), "/fr.gcastel.freeboxV6GeekIncDownloader");
-    oldDir.delete();
-    // ------
-    // Migration des anciennes versions : on supprime le vieux répertoire de cache
-    oldFile = new File(Environment.getExternalStorageDirectory(), "/Android/data/fr.gcastel.freeboxV6GeekIncDownloader/files/geekIncLogo.png");
-    oldFile.delete();
-    oldDir = new File(Environment.getExternalStorageDirectory(), "/Android/data/fr.gcastel.freeboxV6GeekIncDownloader/files/");
-    oldDir.delete();
-    oldDir = new File(Environment.getExternalStorageDirectory(), "/Android/data/fr.gcastel.freeboxV6GeekIncDownloader/");
-    oldDir.delete();
-    // ------      
-    
+   
     outFile = new File(cacheDir, logoFile);
   }
   

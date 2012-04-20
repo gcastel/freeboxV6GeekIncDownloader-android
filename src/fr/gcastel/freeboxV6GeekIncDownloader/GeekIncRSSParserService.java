@@ -23,6 +23,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import android.util.Log;
+
 /**
  * Le parser du flux RSS (parser à l'ancienne) 
  * @author Gerben
@@ -65,15 +67,26 @@ public class GeekIncRSSParserService {
     
     List<String> itemsList = getItemsList();
     for (String itemContent : itemsList) {
+    	// Recherche du titre
       int titlePos = itemContent.indexOf("<title>") + "<title>".length();
       int endTitlePos = itemContent.indexOf("</title>", titlePos);
       String titre = itemContent.substring(titlePos, endTitlePos);
       titre = titre.substring("Geek Inc HD ".length());
       
-      int urlPos = itemContent.indexOf("<enclosure url=") + "<enclosure url=".length() + 1;
-      int endUrlPos = itemContent.indexOf("\"", urlPos);
-      String url = itemContent.substring(urlPos, endUrlPos);
+      // Recherche de l'url de la vidéo
+      int urlPos = itemContent.indexOf("<feedburner:origEnclosureLink>") + "<feedburner:origEnclosureLink>".length();
+      int endUrlPos = itemContent.indexOf("</feedburner:origEnclosureLink>", urlPos);
+
+      String urlOrig = itemContent.substring(urlPos, endUrlPos);
+      String url;
+      if (urlOrig.startsWith("http://www.podtrac.com/pts/")) {
+      	url = urlOrig;
+      } else {
+        int mediaUrlPos = urlOrig.indexOf("amp;media_url=") + "amp;media_url=".length();
+        url = urlOrig.substring(mediaUrlPos);
+      }
       
+      // Recherche de la date de publication 
       int datePos = itemContent.indexOf("<pubDate>") + "<pubDate>".length();
       int endDatePos = itemContent.indexOf("</pubDate>", datePos);
       String dateToParse = itemContent.substring(datePos,endDatePos);

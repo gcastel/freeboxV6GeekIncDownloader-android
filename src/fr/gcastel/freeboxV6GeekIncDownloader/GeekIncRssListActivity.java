@@ -16,11 +16,9 @@
 package fr.gcastel.freeboxV6GeekIncDownloader;
 
 import java.io.File;
-import java.util.List;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -38,11 +36,9 @@ import android.widget.ImageView;
  * @author Gerben
  */
 public class GeekIncRssListActivity extends ListActivity {
-  protected ProgressDialog dialog = null; 
-  protected ProgressTask task = null;
-  private String fluxRSS = null;
-  private List<PodcastElement> podcastElements = null;
 
+	protected GeekIncListController listController = null; 
+	
   /**
    * L'initialisation de l'activité
    */
@@ -50,54 +46,21 @@ public class GeekIncRssListActivity extends ListActivity {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.main);
-
+    
+    // On réattache les données à la vue
+    listController = (GeekIncListController)getLastNonConfigurationInstance();
+    if (listController == null) {
+    	listController = new GeekIncListController();
+    }
+    
     // Le logo est-il présent
     File geekIncLogoFile = new File(getCacheDir(), getString(R.string.geekIncLogoFileName));
     if (geekIncLogoFile.exists()) {
       loadImageInView(geekIncLogoFile);
     }
     
-    task = (ProgressTask) getLastNonConfigurationInstance();
-    if (task == null) {
-      // S'il s'agit du premier lancement, on lance tout le système
-      // sinon, l'utilisateur devra faire "refresh"
-      if (savedInstanceState == null) {
-        launchReload();
-      } else {
-        // Restoration des données
-        fluxRSS = savedInstanceState.getString("fluxRSS");
-        
-        // Parsing
-        // (déléguer ça à un thread ?)
-        GeekIncRSSParserService parser = new GeekIncRSSParserService(fluxRSS);
-        podcastElements = parser.getPodcastElements();
-        updateView();
-      }
-    } else {
-      task.attach(this);
-      int oldProgress = 0;
-      
-      // On gère le cas d'un changement d'activité / rotation d'écran
-      // avant la création du dialogue
-      if (dialog != null) {
-      	oldProgress = dialog.getProgress(); 
-      }
-      
-      // Si le dialogue doit encore être affiché, on le recrée
-      if (oldProgress < 100) {
-        // Nouveau dialogue lié à cette activité
-        dialog = new ProgressDialog(this);
-        dialog.setCancelable(true);
-        dialog.setMessage("Chargement...");
-        // set the progress to be horizontal
-        dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        // reset the bar to the default value of 0
-        dialog.setProgress(oldProgress);
-        dialog.setMax(100);
-        dialog.show();        
-      }
-      updateProgress(task.getProgress(), task.getPodcastElements(), task.getFluxRSS());
-    }
+    // Initialisation ou mise à jour de l'activité
+    listController.handleActivityCreation(this, savedInstanceState);
   }
 
   /**
@@ -118,11 +81,7 @@ public class GeekIncRssListActivity extends ListActivity {
   public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
     case R.id.refreshButton:
-      if ((task == null) || 
-          ((dialog != null) && (dialog.getProgress() >= 100))) {
-        launchReload();
-      }
-      
+      listController.launchReload();
       return true;
     case R.id.aboutButton:
       AlertDialog.Builder alertbox = new AlertDialog.Builder(this);
@@ -148,45 +107,15 @@ public class GeekIncRssListActivity extends ListActivity {
       return super.onOptionsItemSelected(item);
     }
   }
-  
-  private void launchReload() {
-    dialog = new ProgressDialog(this);
-    dialog.setCancelable(true);
-    dialog.setMessage("Chargement...");
-    // set the progress to be horizontal
-    dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-    // reset the bar to the default value of 0
-    dialog.setProgress(0);
-    dialog.setMax(100);
-    dialog.show();
-            
-    task = new ProgressTask(this);
-    task.execute();
-  }
 
-  @Override
-  protected void onRestoreInstanceState(Bundle savedInstanceState) {
-    fluxRSS = savedInstanceState.getString("fluxRSS");
-    super.onRestoreInstanceState(savedInstanceState);
-  }
-
-  @Override
-  protected void onSaveInstanceState(Bundle outState) {
-    outState.putString("fluxRSS", fluxRSS);
-    super.onSaveInstanceState(outState);
-  }
-
+  /**
+   * Retourne le contrôleur lors d'un switch d'activité
+   * et détâche les tâches en cours
+   */
   @Override
   public Object onRetainNonConfigurationInstance() {
-    if (task != null) {
-      task.detach();
-    }
-    return (task);
-  }
-
-  @Override
-  public void onStart() {
-    super.onStart(); 
+  	listController.detachTask();
+    return listController;
   }
 
   /**
@@ -194,51 +123,11 @@ public class GeekIncRssListActivity extends ListActivity {
    *   
    * @param inFile le fichier contenant l'image à charger
    */
-  private void loadImageInView(File inFile) {
+  public void loadImageInView(File inFile) {
     ImageView img = (ImageView) findViewById(R.id.geekIncHDLogo);
     img.setAdjustViewBounds(true);
     img.setMaxWidth((int) (getResources().getDisplayMetrics().density * 100 + 0.5f));
     img.setImageBitmap(BitmapFactory.decodeFile(inFile.getPath()));
     img.setVisibility(View.VISIBLE);
-  }
-
-  /**
-   * Mise à jour de l'indicateur de progression
-   * 
-   * @param qty la quantité
-   * @param elements les éléments remontés
-   * @param inFluxRSS le flux RSS remonté
-   */
-  void updateProgress(int qty, List<PodcastElement> elements, String inFluxRSS) {
-    dialog.setProgress(qty);
-    if (inFluxRSS != null) {
-      fluxRSS = inFluxRSS;
-    }
-    
-    if (elements != null) {
-      podcastElements = elements;
-    }
-
-    if (qty >= 100) {
-      // Fini !!
-      dialog.hide();
-      updateView();
-    }
-  }
-  
-  /**
-   * Mise à jour de la vue avec les données en cours
-   */
-  void updateView() {
-    // Le logo est-il présent
-    File geekIncLogoFile = new File(
-        getCacheDir(),
-        getString(R.string.geekIncLogoFileName));
-    if (geekIncLogoFile.exists()) {
-      loadImageInView(geekIncLogoFile);
-    }
-
-    // Mise en place de la liste
-    setListAdapter(new ListPodcastAdapter(this, podcastElements));
   }
 }
