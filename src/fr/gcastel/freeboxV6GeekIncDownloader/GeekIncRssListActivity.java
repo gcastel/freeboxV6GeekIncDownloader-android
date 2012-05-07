@@ -81,7 +81,7 @@ public class GeekIncRssListActivity extends ListActivity {
   public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
     case R.id.refreshButton:
-      listController.launchReload();
+      listController.launchReloadIfNeeded(this);
       return true;
     case R.id.aboutButton:
       AlertDialog.Builder alertbox = new AlertDialog.Builder(this);

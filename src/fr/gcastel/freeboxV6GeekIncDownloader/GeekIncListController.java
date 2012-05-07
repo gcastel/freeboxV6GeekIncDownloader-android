@@ -127,10 +127,10 @@ public class GeekIncListController {
   /**
    * Lance un reload du flux RSS si pas déjà en cours
    */
-  public void launchReload() {
+  public void launchReloadIfNeeded(GeekIncRssListActivity activity) {
     if ((listData.getTask() == null) || 
         ((listData.getDialog() != null) && (listData.getDialog().getProgress() >= 100))) {
-      launchReload();
+      launchReload(activity);
     }
   }
   
