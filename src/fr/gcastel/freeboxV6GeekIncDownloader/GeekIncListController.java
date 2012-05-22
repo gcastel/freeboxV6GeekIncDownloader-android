@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.util.Log;
 
 
 public class GeekIncListController {
@@ -18,6 +19,7 @@ public class GeekIncListController {
 	 * @param savedInstanceState l'état conservé
 	 */
 	public void handleActivityCreation(GeekIncRssListActivity activity, Bundle savedInstanceState) {
+		
     // Réattachement d'une tâche éventuelle
     ProgressTask task = listData.getTask();
     if (task == null) {
@@ -26,6 +28,7 @@ public class GeekIncListController {
       if (savedInstanceState == null) {
         launchReload(activity);
       } else {
+      	onRestoreInstanceState(savedInstanceState);
         updateView(activity);
       }
     } else {
@@ -141,4 +144,20 @@ public class GeekIncListController {
   public void setDialog(ProgressDialog dialog) {
   	listData.setDialog(dialog);
   }
+  
+  
+  public void onRestoreInstanceState(Bundle savedInstanceState) {
+  	listData.setFluxRSS(savedInstanceState.getString("fluxRSS"));
+    GeekIncRSSParserService parser = new GeekIncRSSParserService(listData.getFluxRSS());
+    try {
+      listData.setPodcastElements(parser.getPodcastElements()); 
+    } catch (Exception ex) {
+      Log.w("GeekIncListController", "Parsing error " + ex.getMessage());
+    }
+  }
+  
+  public void onSaveInstanceState(Bundle outState) {
+  	outState.putString("fluxRSS", listData.getFluxRSS());
+  }
+  
 }

@@ -23,8 +23,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import android.util.Log;
-
 /**
  * Le parser du flux RSS (parser à l'ancienne) 
  * @author Gerben
@@ -114,3 +112,4 @@ public class GeekIncRSSParserService {
   	}
   }
 }
+

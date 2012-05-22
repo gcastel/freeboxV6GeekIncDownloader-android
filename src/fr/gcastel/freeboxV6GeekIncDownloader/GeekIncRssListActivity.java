@@ -118,6 +118,22 @@ public class GeekIncRssListActivity extends ListActivity {
     return listController;
   }
 
+  @Override
+  protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    if (listController != null) {
+    	listController.onRestoreInstanceState(savedInstanceState);
+    }
+    super.onRestoreInstanceState(savedInstanceState);
+  }
+
+  @Override
+  protected void onSaveInstanceState(Bundle outState) {
+    if (listController != null) {
+    	listController.onSaveInstanceState(outState);
+    }
+    super.onSaveInstanceState(outState);
+  }
+  
   /**
    * Chargement de l'image désignée
    *   
