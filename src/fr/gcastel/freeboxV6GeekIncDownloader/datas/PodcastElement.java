@@ -13,7 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-package fr.gcastel.freeboxV6GeekIncDownloader;
+package fr.gcastel.freeboxV6GeekIncDownloader.datas;
 
 public class PodcastElement {
 

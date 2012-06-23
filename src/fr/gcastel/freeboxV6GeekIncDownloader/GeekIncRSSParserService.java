@@ -23,6 +23,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import fr.gcastel.freeboxV6GeekIncDownloader.datas.PodcastElement;
+
 /**
  * Le parser du flux RSS (parser à l'ancienne) 
  * @author Gerben

@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -134,6 +135,14 @@ public class GeekIncRssListActivity extends ListActivity {
     super.onSaveInstanceState(outState);
   }
   
+  @Override
+  public void onPause() {
+	if (listController != null) {
+	    listController.dismissViews();
+	}	  
+	super.onPause();
+  }
+  
   /**
    * Chargement de l'image désignée
    *   
@@ -145,5 +154,13 @@ public class GeekIncRssListActivity extends ListActivity {
     img.setMaxWidth((int) (getResources().getDisplayMetrics().density * 100 + 0.5f));
     img.setImageBitmap(BitmapFactory.decodeFile(inFile.getPath()));
     img.setVisibility(View.VISIBLE);
+    final GeekIncRssListActivity mainActivity = this;
+    img.setOnTouchListener(new View.OnTouchListener() {
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+		    listController.launchReloadIfNeeded(mainActivity);
+			return true;
+		}
+	});
   }
 }

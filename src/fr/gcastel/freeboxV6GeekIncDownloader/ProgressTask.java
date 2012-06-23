@@ -25,6 +25,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import fr.gcastel.freeboxV6GeekIncDownloader.datas.PodcastElement;
 import fr.gcastel.freeboxV6GeekIncDownloader.services.GeekIncLogoDownloadService;
 
 import android.app.ProgressDialog;

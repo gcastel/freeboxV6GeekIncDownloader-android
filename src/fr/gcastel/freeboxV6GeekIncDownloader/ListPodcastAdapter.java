@@ -17,6 +17,7 @@ package fr.gcastel.freeboxV6GeekIncDownloader;
 
 import java.util.List;
 
+import fr.gcastel.freeboxV6GeekIncDownloader.datas.PodcastElement;
 import fr.gcastel.freeboxV6GeekIncDownloader.services.FreeboxDownloaderService;
 
 import android.app.AlertDialog;

@@ -3,6 +3,8 @@ package fr.gcastel.freeboxV6GeekIncDownloader;
 import java.io.File;
 import java.util.List;
 
+import fr.gcastel.freeboxV6GeekIncDownloader.datas.PodcastElement;
+
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.util.Log;
@@ -64,7 +66,11 @@ public class GeekIncListController {
   }  
   
   private void instantiateAndShowProgressDialog(GeekIncRssListActivity activity, int progress) {
-  	ProgressDialog dialog = new ProgressDialog(activity);
+  	if (listData.getDialog() != null) {
+  		listData.getDialog().dismiss();
+  	}
+	  
+	ProgressDialog dialog = new ProgressDialog(activity);
     dialog.setCancelable(true);
     dialog.setMessage("Chargement...");
     // set the progress to be horizontal
@@ -160,4 +166,9 @@ public class GeekIncListController {
   	outState.putString("fluxRSS", listData.getFluxRSS());
   }
   
+  public void dismissViews() {
+	  if (listData.getDialog() != null) {
+		  listData.getDialog().dismiss();
+	  }
+  }
 }
