@@ -1,8 +1,8 @@
-package fr.gcastel.freeboxV6GeekIncDownloader;
+package fr.gcastel.freeboxV6GeekIncDownloader.datas;
 
 import java.util.List;
 
-import fr.gcastel.freeboxV6GeekIncDownloader.datas.PodcastElement;
+import fr.gcastel.freeboxV6GeekIncDownloader.ProgressTask;
 
 import android.app.ProgressDialog;
 

@@ -3,6 +3,7 @@ package fr.gcastel.freeboxV6GeekIncDownloader;
 import java.io.File;
 import java.util.List;
 
+import fr.gcastel.freeboxV6GeekIncDownloader.datas.GeekIncListData;
 import fr.gcastel.freeboxV6GeekIncDownloader.datas.PodcastElement;
 
 import android.app.ProgressDialog;

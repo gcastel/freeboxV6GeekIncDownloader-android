@@ -17,12 +17,13 @@ package fr.gcastel.freeboxV6GeekIncDownloader;
 
 import java.io.File;
 
+import fr.gcastel.freeboxV6GeekIncDownloader.tasks.BitmapResizerTask;
+
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -151,8 +152,12 @@ public class GeekIncRssListActivity extends ListActivity {
   public void loadImageInView(File inFile) {
     ImageView img = (ImageView) findViewById(R.id.geekIncHDLogo);
     img.setAdjustViewBounds(true);
-    img.setMaxWidth((int) (getResources().getDisplayMetrics().density * 100 + 0.5f));
-    img.setImageBitmap(BitmapFactory.decodeFile(inFile.getPath()));
+    int width = (int) (getResources().getDisplayMetrics().density * 100 + 0.5f);
+    img.setMaxWidth(width);
+    
+    BitmapResizerTask task = new BitmapResizerTask(img,width);
+    task.execute(inFile);
+    
     img.setVisibility(View.VISIBLE);
     final GeekIncRssListActivity mainActivity = this;
     img.setOnTouchListener(new View.OnTouchListener() {
