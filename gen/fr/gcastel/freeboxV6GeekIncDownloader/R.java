@@ -15,11 +15,12 @@ public final class R {
         public static final int icon=0x7f020001;
     }
     public static final class id {
-        public static final int aboutButton=0x7f060005;
+        public static final int aboutButton=0x7f060006;
         public static final int dateItem=0x7f060001;
         public static final int geekIncHDLogo=0x7f060002;
         public static final int passwordField=0x7f060003;
-        public static final int refreshButton=0x7f060004;
+        public static final int refreshButton=0x7f060005;
+        public static final int savePassCheckbox=0x7f060004;
         public static final int titleItem=0x7f060000;
     }
     public static final class layout {
@@ -38,5 +39,7 @@ public final class R {
         public static final int freeboxURL=0x7f040004;
         public static final int geekIncLogoFileName=0x7f040002;
         public static final int geekIncRSSFeedURL=0x7f040003;
+        public static final int savePassword=0x7f040006;
+        public static final int savedPasswordPreferencesKey=0x7f040007;
     }
 }

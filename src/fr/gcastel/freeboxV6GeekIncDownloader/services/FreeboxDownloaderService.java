@@ -190,6 +190,8 @@ public class FreeboxDownloaderService extends AsyncTask<String, Void, Void> {
         String cookie = loginFreebox(params[1]);
         if (alertDialogMessage == null) {  
           launchDownload(cookie, params[0]);
+        } else {
+          echec = true;
         }
       }
     } catch(Exception e) {

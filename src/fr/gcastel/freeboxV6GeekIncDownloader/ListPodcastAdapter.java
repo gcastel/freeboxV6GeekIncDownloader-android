@@ -20,14 +20,17 @@ import java.util.List;
 import fr.gcastel.freeboxV6GeekIncDownloader.datas.PodcastElement;
 import fr.gcastel.freeboxV6GeekIncDownloader.services.FreeboxDownloaderService;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences.Editor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,19 +42,21 @@ public class ListPodcastAdapter extends BaseAdapter {
 	private final List<PodcastElement> elements;
 	private final LayoutInflater layoutInflater;
 	private FreeboxDownloaderService fbxService;
-	private final Context context;
+	private final Activity activity;
+	private final String SAVED_PASSWORD_PREFERENCES_KEY;
 
-	public ListPodcastAdapter(Context inContext, List<PodcastElement> elements) {
+	public ListPodcastAdapter(Activity inActivity, List<PodcastElement> elements) {
 		super();
 		this.elements = elements;
-		context = inContext;
-		layoutInflater = LayoutInflater.from(context);
-		dialog = new ProgressDialog(context);
+		activity = inActivity;
+		layoutInflater = LayoutInflater.from(activity);
+		dialog = new ProgressDialog(activity);
 		dialog.setCancelable(true);
 		dialog.setMessage("Connexion à la freebox");
 		dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		SAVED_PASSWORD_PREFERENCES_KEY = activity.getString(R.string.savedPasswordPreferencesKey);
 		fbxService = new FreeboxDownloaderService(
-				context.getString(R.string.freeboxURL), context, dialog);
+				activity.getString(R.string.freeboxURL), activity, dialog);
 	}
 
 	@Override
@@ -74,19 +79,30 @@ public class ListPodcastAdapter extends BaseAdapter {
 
 	
 	private void askForPassword(final String url) {
-		LayoutInflater infalter = LayoutInflater.from(context);
+		LayoutInflater infalter = LayoutInflater.from(activity);
 		final View textEntryView = infalter.inflate(R.layout.password_dialog,
 				null);
-		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
+		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activity);
 		dialogBuilder.setTitle("Saisissez le mot de passe freebox");
 		dialogBuilder.setView(textEntryView);
 		dialogBuilder.setPositiveButton("Ok",
 				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						EditText passField = (EditText) textEntryView.findViewById(R.id.passwordField); 
+						EditText passField = (EditText) textEntryView.findViewById(R.id.passwordField);
+						String password = String.valueOf(passField.getText());
+						// Si l'enregistrement du password est demandé, on le fait
+						CheckBox chkBox = (CheckBox) textEntryView.findViewById(R.id.savePassCheckbox);
+						Editor editor = activity.getPreferences(Context.MODE_PRIVATE).edit();
+						if (chkBox.isChecked()) {
+						    editor.putString(SAVED_PASSWORD_PREFERENCES_KEY, password);
+						} else {
+							editor.remove(SAVED_PASSWORD_PREFERENCES_KEY);
+						}
+						editor.commit();
+						
 						if (fbxService.getStatus() == AsyncTask.Status.PENDING) {
-                                                  fbxService.execute(url, passField.getText().toString());
+                                                  fbxService.execute(url, password);
 						}
 					}
 				});
@@ -117,14 +133,14 @@ public class ListPodcastAdapter extends BaseAdapter {
 			public void onClick(View v) {
 				// Une tâche ne peut être exécutée qu'une fois
 				if (fbxService.getStatus() == AsyncTask.Status.FINISHED) {
-					fbxService = new FreeboxDownloaderService(context
-							.getString(R.string.freeboxURL), context, dialog);
+					fbxService = new FreeboxDownloaderService(activity
+							.getString(R.string.freeboxURL), activity, dialog);
 				}
 				if (fbxService.getStatus() == AsyncTask.Status.PENDING) {
 					if (fbxService.isConnectedViaWifi()) {
 					  askForPassword(elements.get(position).getUrl());
 					} else {
-			      Toast.makeText(context, "Vous devez être connecté en Wifi pour accéder à la freebox", Toast.LENGTH_SHORT).show();
+			      Toast.makeText(activity, "Vous devez être connecté en Wifi pour accéder à la freebox", Toast.LENGTH_SHORT).show();
 					}
 				}
 			}

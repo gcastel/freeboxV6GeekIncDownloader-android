@@ -6,4 +6,6 @@
     <string name="geekIncRSSFeedURL">http://feeds.feedburner.com/GeekIncHD</string>
     <string name="freeboxURL">http://mafreebox.freebox.fr</string>
     <string name="emptyRSSList">Aucun épisode trouvé</string>
+    <string name="savePassword">Enregistrer le mot de passe</string>
+    <string name="savedPasswordPreferencesKey">SAVED_PASSWORD_PREFERENCES_KEY</string>
 </resources>
