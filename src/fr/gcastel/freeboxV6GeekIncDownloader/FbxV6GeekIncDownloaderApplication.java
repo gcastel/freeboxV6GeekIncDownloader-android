@@ -20,7 +20,7 @@ import org.acra.annotation.ReportsCrashes;
 
 import android.app.Application;
 
-//@ReportsCrashes( formKey = )
+//@ReportsCrashes( formKey =  )
 public class FbxV6GeekIncDownloaderApplication extends Application {
   @Override
   public void onCreate() {
