@@ -85,6 +85,18 @@ public class ListPodcastAdapter extends BaseAdapter {
 		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activity);
 		dialogBuilder.setTitle("Saisissez le mot de passe freebox");
 		dialogBuilder.setView(textEntryView);
+		
+		// Si disponible, initialiser le mot de passe
+		EditText passField = (EditText) textEntryView.findViewById(R.id.passwordField);
+		String prefPass = activity.getPreferences(Context.MODE_PRIVATE).getString(SAVED_PASSWORD_PREFERENCES_KEY, "");
+		passField.setText(prefPass);
+		if (!"".equals(prefPass)) {
+		  CheckBox chkBox = (CheckBox) textEntryView.findViewById(R.id.savePassCheckbox);
+		  chkBox.setChecked(true);
+		}
+
+		// Lien des événements		
+		
 		dialogBuilder.setPositiveButton("Ok",
 				new DialogInterface.OnClickListener() {
 					@Override
@@ -107,7 +119,7 @@ public class ListPodcastAdapter extends BaseAdapter {
 					}
 				});
 		dialogBuilder.setNegativeButton("Annuler", null);
-	  dialogBuilder.show();		
+	    dialogBuilder.show();		
 	}
 
 	@Override
