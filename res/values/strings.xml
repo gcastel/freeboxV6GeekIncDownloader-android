@@ -8,4 +8,5 @@
     <string name="emptyRSSList">Aucun épisode trouvé</string>
     <string name="savePassword">Enregistrer le mot de passe</string>
     <string name="savedPasswordPreferencesKey">SAVED_PASSWORD_PREFERENCES_KEY</string>
+    <string name="geekIncLogoLabel">GeekInc Logo</string>
 </resources>
