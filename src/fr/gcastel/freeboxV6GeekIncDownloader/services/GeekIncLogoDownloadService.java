@@ -42,13 +42,13 @@ public class GeekIncLogoDownloadService {
   }
   
   public void download() throws Exception {
-    // Si le logo existe depuis moins d'une semaine, on ne le retÈlÈcharge pas
+    // Si le logo existe depuis moins d'une semaine, on ne le ret√©l√©charge pas
     if (outFile.exists()) {
       // Moins une semaine
       long uneSemainePlusTot = System.currentTimeMillis() - (7 * 24 * 60 * 60 * 1000);
       
       if (outFile.lastModified() > uneSemainePlusTot) {
-        Log.i("GeekIncLogoDownloadService", "Le logo a dÈj‡ ÈtÈ tÈlÈchargÈ il y a moins d'une semaine.");
+        Log.i("GeekIncLogoDownloadService", "Le logo a d√©j√† √©t√© t√©l√©charg√© il y a moins d'une semaine.");
         return;
       }
     }
