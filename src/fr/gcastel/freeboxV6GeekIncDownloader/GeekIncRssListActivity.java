@@ -33,7 +33,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 /**
- * L'activité principale de l'application
+ * L'activitÃ© principale de l'application
  * 
  * @author Gerben
  */
@@ -42,31 +42,31 @@ public class GeekIncRssListActivity extends ListActivity {
 	protected GeekIncListController listController = null; 
 	
   /**
-   * L'initialisation de l'activité
+   * L'initialisation de l'activitÃ©
    */
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.main);
     
-    // On réattache les données à la vue
+    // On rÃ©attache les donnÃ©es Ã  la vue
     listController = (GeekIncListController)getLastNonConfigurationInstance();
     if (listController == null) {
     	listController = new GeekIncListController();
     }
     
-    // Le logo est-il présent
+    // Le logo est-il prÃ©sent
     File geekIncLogoFile = new File(getCacheDir(), getString(R.string.geekIncLogoFileName));
     if (geekIncLogoFile.exists()) {
       loadImageInView(geekIncLogoFile);
     }
     
-    // Initialisation ou mise à jour de l'activité
+    // Initialisation ou mise Ã  jour de l'activitÃ©
     listController.handleActivityCreation(this, savedInstanceState);
   }
 
   /**
-   * Création du menu
+   * CrÃ©ation du menu
    */
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
@@ -77,7 +77,7 @@ public class GeekIncRssListActivity extends ListActivity {
   }
 
   /**
-   * Exécute une commande liée au menu
+   * ExÃ©cute une commande liÃ©e au menu
    */
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
@@ -97,7 +97,7 @@ public class GeekIncRssListActivity extends ListActivity {
       alertbox.setMessage(
           getString(R.string.app_name) + " v" + versionName + "\n\n" +
           "(c) Gerben Castel 2011\n" +
-          getString(R.string.app_url) + "\n\nIcône :\n\"Hornet Icon Set\"\n(CC BY-NC-ND 3.0)\nhttp://878952.deviantart.com/");
+          getString(R.string.app_url) + "\n\nIc?ne :\n\"Hornet Icon Set\"\n(CC BY-NC-ND 3.0)\nhttp://878952.deviantart.com/");
       alertbox.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
         public void onClick(DialogInterface arg0, int arg1) {
            return;
@@ -111,8 +111,8 @@ public class GeekIncRssListActivity extends ListActivity {
   }
 
   /**
-   * Retourne le contrôleur lors d'un switch d'activité
-   * et détâche les tâches en cours
+   * Retourne le contr?leur lors d'un switch d'activit?
+   * et d?t?che les t?ches en cours
    */
   @Override
   public Object onRetainNonConfigurationInstance() {
@@ -145,9 +145,9 @@ public class GeekIncRssListActivity extends ListActivity {
   }
   
   /**
-   * Chargement de l'image désignée
+   * Chargement de l'image d?sign?e
    *   
-   * @param inFile le fichier contenant l'image à charger
+   * @param inFile le fichier contenant l'image ? charger
    */
   public void loadImageInView(File inFile) {
     ImageView img = (ImageView) findViewById(R.id.geekIncHDLogo);
