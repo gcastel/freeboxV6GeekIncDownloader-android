@@ -17,13 +17,12 @@ package fr.gcastel.freeboxV6GeekIncDownloader;
 
 import java.io.File;
 
-import fr.gcastel.freeboxV6GeekIncDownloader.tasks.BitmapResizerTask;
-
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -49,7 +48,7 @@ public class GeekIncRssListActivity extends ListActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.main);
     
-    // On réattache les données à la vue
+    // On r�attache les données à la vue
     listController = (GeekIncListController)getLastNonConfigurationInstance();
     if (listController == null) {
     	listController = new GeekIncListController();
@@ -97,7 +96,7 @@ public class GeekIncRssListActivity extends ListActivity {
       alertbox.setMessage(
           getString(R.string.app_name) + " v" + versionName + "\n\n" +
           "(c) Gerben Castel 2011\n" +
-          getString(R.string.app_url) + "\n\nIc?ne :\n\"Hornet Icon Set\"\n(CC BY-NC-ND 3.0)\nhttp://878952.deviantart.com/");
+          getString(R.string.app_url) + "\n\nIcône :\n\"Hornet Icon Set\"\n(CC BY-NC-ND 3.0)\nhttp://878952.deviantart.com/");
       alertbox.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
         public void onClick(DialogInterface arg0, int arg1) {
            return;
@@ -111,8 +110,8 @@ public class GeekIncRssListActivity extends ListActivity {
   }
 
   /**
-   * Retourne le contr?leur lors d'un switch d'activit?
-   * et d?t?che les t?ches en cours
+   * Retourne le contrôleur lors d'un switch d'activité
+   * et détache les tâches en cours
    */
   @Override
   public Object onRetainNonConfigurationInstance() {
@@ -145,9 +144,9 @@ public class GeekIncRssListActivity extends ListActivity {
   }
   
   /**
-   * Chargement de l'image d?sign?e
+   * Chargement de l'image désignée
    *   
-   * @param inFile le fichier contenant l'image ? charger
+   * @param inFile le fichier contenant l'image à charger
    */
   public void loadImageInView(File inFile) {
     ImageView img = (ImageView) findViewById(R.id.geekIncHDLogo);
@@ -155,8 +154,7 @@ public class GeekIncRssListActivity extends ListActivity {
     int width = (int) (getResources().getDisplayMetrics().density * 100 + 0.5f);
     img.setMaxWidth(width);
     
-    BitmapResizerTask task = new BitmapResizerTask(img,width);
-    task.execute(inFile);
+    img.setImageBitmap(BitmapFactory.decodeFile(inFile.getAbsolutePath()));
     
     img.setVisibility(View.VISIBLE);
     final GeekIncRssListActivity mainActivity = this;

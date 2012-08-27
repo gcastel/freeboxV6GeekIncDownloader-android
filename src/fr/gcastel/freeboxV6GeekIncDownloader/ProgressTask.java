@@ -34,7 +34,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 /**
- * La classe de notre tâche asynchrone 
+ * La classe de notre tÃ¢che asynchrone 
  * de chargement du flux RSS
  *  
  * @author Gerben
@@ -46,27 +46,29 @@ public class ProgressTask extends AsyncTask<Void, Void, Void> {
   private String fluxRSS = null;
   private List<PodcastElement> podcastElements;
   private final String logoFileName;
+  private int width;
 
   /**
    * Le constructeur principal
    * 
-   * @param activity l'activité liée
+   * @param activity l'activitÃ© liÃ©e
    */
-  ProgressTask(GeekIncRssListActivity activity) {
+  ProgressTask(GeekIncRssListActivity activity, int inWidth) {
     super();
     dialog = activity.listController.getDialog();
     logoFileName = activity.getString(R.string.geekIncLogoFileName);
+    width = inWidth;
     attach(activity);
   }
 
   /**
-   * Méthode effectuant la recherche du flux RSS
+   * MÃ©thode effectuant la recherche du flux RSS
    * 
    * @throws Exception
-   *           en cas de problèmes
+   *           en cas de problÃ¨mes
    */
   private void fetchFluxRSS() throws Exception {
-    // Récupération du flux RSS
+    // RÃ©cupÃ©ration du flux RSS
     StringBuilder fluxRssStringBuilder = new StringBuilder();
     HttpClient client = new DefaultHttpClient();
     HttpGet request = new HttpGet(
@@ -74,7 +76,7 @@ public class ProgressTask extends AsyncTask<Void, Void, Void> {
 
     HttpResponse response = client.execute(request);
 
-    // Traitement de la réponse
+    // Traitement de la rÃ©ponse
     InputStream repStream = response.getEntity().getContent();
     BufferedReader repReader = new BufferedReader(new InputStreamReader(
         repStream));
@@ -92,10 +94,10 @@ public class ProgressTask extends AsyncTask<Void, Void, Void> {
   }
 
   /**
-   * Méthode retournant l'url du logo GeekInc On ne fait pas de parsing XML
+   * MÃ©thode retournant l'url du logo GeekInc On ne fait pas de parsing XML
    * complet, c'est trop couteux
    * 
-   * @return l'url trouvée
+   * @return l'url trouvÃ©e
    */
   private String getGeekIncLogoURL() {
     // On cherche <channel> puis <image> puis <url></url>
@@ -103,18 +105,18 @@ public class ProgressTask extends AsyncTask<Void, Void, Void> {
     int indexImage = fluxRSS.indexOf("<image>", indexChannel + 1);
     int indexURL = fluxRSS.indexOf("<url>", indexImage + 1);
 
-    // Extraction jusqu'à </url>
+    // Extraction jusqu'ï¿½ </url>
     return fluxRSS.substring(indexURL + 5,
         fluxRSS.indexOf("</url>", indexURL));
   }
 
   /*
-   * C'est ici qu'on fait le requêtage du flux RSS GeekInc
+   * C'est ici qu'on fait le requÃªtage du flux RSS GeekInc
    */
   @Override
   protected Void doInBackground(Void... unused) {
 
-    // Récupération du flux RSS
+    // RÃ©cupÃ©ration du flux RSS
     try {
       fetchFluxRSS();
     } catch (Exception ex) {
@@ -137,13 +139,13 @@ public class ProgressTask extends AsyncTask<Void, Void, Void> {
     progress += 10;
     publishProgress();
 
-    // Récupération du logo GeekInc
+    // RÃ©cupÃ©ration du logo GeekInc
     if (logoURL != null) {
-      Log.i("ProgressTask", "URL trouvée : " + logoURL);
+      Log.i("ProgressTask", "URL trouvï¿½e : " + logoURL);
       GeekIncLogoDownloadService downService = new GeekIncLogoDownloadService(
         logoURL,  activity.getCacheDir(), logoFileName);
       try {
-        downService.download();
+        downService.downloadAndResize(width);
       } catch (Exception ex) {
       	fluxRSS = null;
         Log.w("ProgressTask", "HTTP download error " + ex.getMessage());
@@ -153,7 +155,7 @@ public class ProgressTask extends AsyncTask<Void, Void, Void> {
     progress += 30;
     publishProgress();
 
-    // Parsing du flux RSS pour générer les liens
+    // Parsing du flux RSS pour gÃ©nÃ©rer les liens
 
     progress += 20;
     GeekIncRSSParserService parser = new GeekIncRSSParserService(fluxRSS);
@@ -182,10 +184,10 @@ public class ProgressTask extends AsyncTask<Void, Void, Void> {
   protected void onPostExecute(Void unused) {
     if (activity != null) {
       if (fluxRSS != null) {
-        Toast.makeText(activity, "Données à jour !", Toast.LENGTH_SHORT).show();
+        Toast.makeText(activity, "Donnï¿½es ï¿½ jour !", Toast.LENGTH_SHORT).show();
       } else {
         Toast.makeText(activity,
-            "Impossible de récupérer le flux RSS de GeekInc HD !",
+            "Impossible de rï¿½cupï¿½rer le flux RSS de GeekInc HD !",
             Toast.LENGTH_SHORT).show();
         if (activity.listController.getDialog() != null) {
           activity.listController.getDialog().hide();

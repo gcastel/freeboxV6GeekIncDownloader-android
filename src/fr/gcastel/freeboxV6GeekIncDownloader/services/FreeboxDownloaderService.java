@@ -46,7 +46,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 /**
- * Le service de téléchargement via freebox
+ * Le service de tÃ©lÃ©chargement via freebox
  * 
  * @author Gerben
  */
@@ -70,7 +70,7 @@ public class FreeboxDownloaderService extends AsyncTask<String, Void, Void> {
   /**
    * Instanciation
    * 
-   * @param inUrlFreebox l'url à utiliser pour se connecter à la freebox
+   * @param inUrlFreebox l'url Ã  utiliser pour se connecter Ã  la freebox
    */
   public FreeboxDownloaderService(String inUrlFreebox, Context context, ProgressDialog inDialog) {
     urlFreebox = inUrlFreebox;
@@ -93,14 +93,14 @@ public class FreeboxDownloaderService extends AsyncTask<String, Void, Void> {
   private String loginFreebox(String password) throws UnsupportedEncodingException, ClientProtocolException, IOException {
     String result = "";
 
-    // Préparation des paramètres
+    // PrÃ©paration des paramÃ¨tres
     HttpPost postReq = new HttpPost(urlFreebox + "/login.php");
     List<NameValuePair> parametres = new ArrayList<NameValuePair>();
     parametres.add(new BasicNameValuePair("login", "freebox"));
     parametres.add(new BasicNameValuePair("passwd", password));
     postReq.setEntity(new UrlEncodedFormEntity(parametres));
     
-    // Envoi de la requête
+    // Envoi de la requÃªte
     HttpParams httpParameters = new BasicHttpParams();
     
     // Mise en place de timeouts
@@ -149,7 +149,7 @@ public class FreeboxDownloaderService extends AsyncTask<String, Void, Void> {
 
   
   private void launchDownload(String cookie, String url) throws UnsupportedEncodingException, ClientProtocolException, IOException {
-    // Préparation des paramètres
+    // PrÃ©paration des paramÃ¨tres
     HttpPost postReq = new HttpPost(urlFreebox + "/download.cgi");
     List<NameValuePair> parametres = new ArrayList<NameValuePair>();
     parametres.add(new BasicNameValuePair("url", url));
@@ -161,7 +161,7 @@ public class FreeboxDownloaderService extends AsyncTask<String, Void, Void> {
     postReq.setHeader("Cookie", cookie + ";");
     postReq.setHeader("Referer", "http://mafreebox.freebox.fr/download.php");
     
-    // Envoi de la requête
+    // Envoi de la requÃªte
     HttpParams httpParameters = new BasicHttpParams();
     
     // Mise en place de timeouts
@@ -177,8 +177,8 @@ public class FreeboxDownloaderService extends AsyncTask<String, Void, Void> {
 
     // Ok ? (302 = moved = redirection)
     if (response.getStatusLine().getStatusCode() != 302) {
-      Log.d(TAG, "Erreur lors du lancement du téléchargement - statusCode = " + response.getStatusLine().getStatusCode()  + " - reason = " + response.getStatusLine().getReasonPhrase());
-      prepareAlertDialog("Erreur lors du lancement du téléchargement.");
+      Log.d(TAG, "Erreur lors du lancement du tÃ©lÃ©chargement - statusCode = " + response.getStatusLine().getStatusCode()  + " - reason = " + response.getStatusLine().getReasonPhrase());
+      prepareAlertDialog("Erreur lors du lancement du tÃ©lÃ©chargement.");
     }  	
   }
   
@@ -205,7 +205,7 @@ public class FreeboxDownloaderService extends AsyncTask<String, Void, Void> {
   protected void onPreExecute() {
     super.onPreExecute();
     if (!isConnectedViaWifi()) {
-      Toast.makeText(zeContext, "Vous devez être connecté en Wifi pour accéder à la freebox", Toast.LENGTH_SHORT).show();
+      Toast.makeText(zeContext, "Vous devez Ãªtre connectÃ© en Wifi pour accÃ©der Ã  la freebox", Toast.LENGTH_SHORT).show();
       bypassTraitement = true;
     } else {
       if (dialog != null) {
@@ -226,9 +226,9 @@ public class FreeboxDownloaderService extends AsyncTask<String, Void, Void> {
     
     if (!bypassTraitement) {
       if (echec) {
-        Toast.makeText(zeContext, "Impossible de se connecter à la freebox", Toast.LENGTH_SHORT).show();
+        Toast.makeText(zeContext, "Impossible de se connecter Ã  la freebox", Toast.LENGTH_SHORT).show();
       } else {
-        Toast.makeText(zeContext, "Téléchargement lancé !", Toast.LENGTH_SHORT).show();
+        Toast.makeText(zeContext, "TÃ©lÃ©chargement lancÃ© !", Toast.LENGTH_SHORT).show();
       }
     }
   }
@@ -239,7 +239,7 @@ public class FreeboxDownloaderService extends AsyncTask<String, Void, Void> {
     case PROGRESS :
       dialog = new ProgressDialog(zeContext);
       dialog.setCancelable(true);
-      ((ProgressDialog)dialog).setMessage("Connexion à la freebox");
+      ((ProgressDialog)dialog).setMessage("Connexion Ã  la freebox");
       ((ProgressDialog)dialog).setProgressStyle(ProgressDialog.STYLE_SPINNER);
       dialog.show();
       break;

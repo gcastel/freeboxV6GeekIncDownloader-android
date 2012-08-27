@@ -52,7 +52,7 @@ public class ListPodcastAdapter extends BaseAdapter {
 		layoutInflater = LayoutInflater.from(activity);
 		dialog = new ProgressDialog(activity);
 		dialog.setCancelable(true);
-		dialog.setMessage("Connexion à la freebox");
+		dialog.setMessage("Connexion Ã  la freebox");
 		dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		SAVED_PASSWORD_PREFERENCES_KEY = activity.getString(R.string.savedPasswordPreferencesKey);
 		fbxService = new FreeboxDownloaderService(
@@ -95,7 +95,7 @@ public class ListPodcastAdapter extends BaseAdapter {
 		  chkBox.setChecked(true);
 		}
 
-		// Lien des événements		
+		// Lien des Ã©vÃ©nements		
 		
 		dialogBuilder.setPositiveButton("Ok",
 				new DialogInterface.OnClickListener() {
@@ -103,7 +103,7 @@ public class ListPodcastAdapter extends BaseAdapter {
 					public void onClick(DialogInterface dialog, int which) {
 						EditText passField = (EditText) textEntryView.findViewById(R.id.passwordField);
 						String password = String.valueOf(passField.getText());
-						// Si l'enregistrement du password est demandé, on le fait
+						// Si l'enregistrement du password est demandÃ©, on le fait
 						CheckBox chkBox = (CheckBox) textEntryView.findViewById(R.id.savePassCheckbox);
 						Editor editor = activity.getPreferences(Context.MODE_PRIVATE).edit();
 						if (chkBox.isChecked()) {
@@ -143,7 +143,7 @@ public class ListPodcastAdapter extends BaseAdapter {
 		convertView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// Une tâche ne peut être exécutée qu'une fois
+				// Une tÃ¢che ne peut Ãªtre exÃ©cutÃ©e qu'une fois
 				if (fbxService.getStatus() == AsyncTask.Status.FINISHED) {
 					fbxService = new FreeboxDownloaderService(activity
 							.getString(R.string.freeboxURL), activity, dialog);
@@ -152,7 +152,7 @@ public class ListPodcastAdapter extends BaseAdapter {
 					if (fbxService.isConnectedViaWifi()) {
 					  askForPassword(elements.get(position).getUrl());
 					} else {
-			      Toast.makeText(activity, "Vous devez être connecté en Wifi pour accéder à la freebox", Toast.LENGTH_SHORT).show();
+			      Toast.makeText(activity, "Vous devez Ãªtre connectÃ© en Wifi pour accÃ©der Ã  la freebox", Toast.LENGTH_SHORT).show();
 					}
 				}
 			}

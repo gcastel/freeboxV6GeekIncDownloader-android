@@ -26,7 +26,7 @@ import java.util.Locale;
 import fr.gcastel.freeboxV6GeekIncDownloader.datas.PodcastElement;
 
 /**
- * Le parser du flux RSS (parser à l'ancienne) 
+ * Le parser du flux RSS (parser Ã  l'ancienne) 
  * @author Gerben
  */
 public class GeekIncRSSParserService {
@@ -41,8 +41,8 @@ public class GeekIncRSSParserService {
   }
   
   /**
-   * Parsing XML à l'ancienne :
-   *   recherche des éléments de début et de fin
+   * Parsing XML Ã  l'ancienne :
+   *   recherche des Ã©lÃ©ments de dÃ©but et de fin
    * @return la liste des blocs <item> du flux
    */
   private List<String> getItemsList() {
@@ -73,7 +73,7 @@ public class GeekIncRSSParserService {
       String titre = itemContent.substring(titlePos, endTitlePos);
       titre = titre.substring("Geek Inc HD ".length());
       
-      // Recherche de l'url de la vidéo
+      // Recherche de l'url de la vidï¿½o
       int urlPos = itemContent.indexOf("<feedburner:origEnclosureLink>") + "<feedburner:origEnclosureLink>".length();
       int endUrlPos = itemContent.indexOf("</feedburner:origEnclosureLink>", urlPos);
 
@@ -99,17 +99,17 @@ public class GeekIncRSSParserService {
   }
   
   /**
-   * Permet de parser la date de l'élément de flux RSS
+   * Permet de parser la date de l'Ã©lÃ©ment de flux RSS
    * 
    * @param inDate la date au format : "Thu, 16 Feb 2012 23:01:07 +0100"
-   * @return la chaîne à afficher dans le programme
+   * @return la chaÃ®ne Ã  afficher dans le programme
    */
   private String formatDate(String inDate) {
   	try {
   	  Date datePub = dateParser.parse(inDate);
   	  return dateFormatter.format(datePub);
   	} catch (ParseException pe) {
-  		// C'est pas dramatique, on le cache à l'utilisateur
+  		// C'est pas dramatique, on le cache Ã  l'utilisateur
   		return "";
   	}
   }

@@ -9,24 +9,25 @@ import fr.gcastel.freeboxV6GeekIncDownloader.datas.PodcastElement;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 
 
 public class GeekIncListController {
 	private final GeekIncListData listData  = new GeekIncListData(); 
 	
 	/**
-	 * MÈthode gÈrant la crÈation de l'activitÈ
-	 * (ce qui peut correspondre ‡ une vraie crÈation ou ‡ une rÈinstanciation)
+	 * M√©thode g√©rant la cr√©ation de l'activit√©
+	 * (ce qui peut correspondre √† une vraie cr√©ation ou √† une r√©instanciation)
 	 * 
-	 * @param activity l'activitÈ en question
-	 * @param savedInstanceState l'Ètat conservÈ
+	 * @param activity l'activit√© en question
+	 * @param savedInstanceState l'√©tat conserv√©
 	 */
 	public void handleActivityCreation(GeekIncRssListActivity activity, Bundle savedInstanceState) {
 		
-    // RÈattachement d'une t‚che Èventuelle
+    // R√©attachement d'une t√¢che √©ventuelle
     ProgressTask task = listData.getTask();
     if (task == null) {
-      // S'il s'agit du premier lancement, on lance tout le systËme
+      // S'il s'agit du premier lancement, on lance tout le syst√®me
       // sinon, l'utilisateur devra faire "refresh"
       if (savedInstanceState == null) {
         launchReload(activity);
@@ -35,18 +36,18 @@ public class GeekIncListController {
         updateView(activity);
       }
     } else {
-    	// RÈattachement
+    	// R√©attachement
       task.attach(activity);
       int oldProgress = 0;
       
-      // On gËre le cas d'un changement d'activitÈ / rotation d'Ècran
-      // avant la crÈation du dialogue
+      // On g√®re le cas d'un changement d'activit√© / rotation d'√©cran
+      // avant la cr√©ation du dialogue
       ProgressDialog dialog = listData.getDialog(); 
       if (dialog != null) {
       	oldProgress = dialog.getProgress(); 
       }
       
-      // Si le dialogue doit encore Ítre affichÈ, on le recrÈe
+      // Si le dialogue doit encore √™tre affich√©, on le recr√©e
       if (oldProgress < 100) {
       	instantiateAndShowProgressDialog(activity, oldProgress);
       }
@@ -61,7 +62,12 @@ public class GeekIncListController {
   private void launchReload(GeekIncRssListActivity activity) {
   	instantiateAndShowProgressDialog(activity, 0);
             
-    ProgressTask task = new ProgressTask(activity);
+    ImageView img = (ImageView) activity.findViewById(R.id.geekIncHDLogo);
+    img.setAdjustViewBounds(true);
+    int width = (int) (activity.getResources().getDisplayMetrics().density * 100 + 0.5f);
+    img.setMaxWidth(width);
+  	
+    ProgressTask task = new ProgressTask(activity, width);
     task.execute();
     listData.setTask(task);
   }  
@@ -85,10 +91,10 @@ public class GeekIncListController {
   
   
   /**
-   * Mise ‡ jour de la vue avec les donnÈes en cours
+   * Mise √† jour de la vue avec les donn√©es en cours
    */
   private void updateView(GeekIncRssListActivity activity) {
-    // Le logo est-il prÈsent
+    // Le logo est-il prÔøΩsent
     File geekIncLogoFile = new File(
         activity.getCacheDir(),
         activity.getString(R.string.geekIncLogoFileName));
@@ -102,11 +108,11 @@ public class GeekIncListController {
   
 
   /**
-   * Mise ‡ jour de l'indicateur de progression
+   * Mise √† jour de l'indicateur de progression
    * 
-   * @param qty la quantitÈ
-   * @param elements les ÈlÈments remontÈs
-   * @param inFluxRSS le flux RSS remontÈ
+   * @param qty la quantit√©
+   * @param elements les √©l√©ments remont√©s
+   * @param inFluxRSS le flux RSS remont√©
    */
   public void updateProgress(GeekIncRssListActivity activity, int qty, List<PodcastElement> elements, String inFluxRSS) {
     listData.getDialog().setProgress(qty);
@@ -126,7 +132,7 @@ public class GeekIncListController {
   }
   
   /**
-   * DÈtache les t‚ches en cours
+   * D√©tache les t√¢ches en cours
    */
   public void detachTask() {
     if (listData.getTask() != null) {
@@ -135,7 +141,7 @@ public class GeekIncListController {
   }
   
   /**
-   * Lance un reload du flux RSS si pas dÈj‡ en cours
+   * Lance un reload du flux RSS si pas d√©j√† en cours
    */
   public void launchReloadIfNeeded(GeekIncRssListActivity activity) {
     if ((listData.getTask() == null) || 
