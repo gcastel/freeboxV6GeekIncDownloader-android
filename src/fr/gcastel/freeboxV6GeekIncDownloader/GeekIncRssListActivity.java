@@ -95,7 +95,7 @@ public class GeekIncRssListActivity extends ListActivity {
       }
       alertbox.setMessage(
           getString(R.string.app_name) + " v" + versionName + "\n\n" +
-          "(c) Gerben Castel 2011\n" +
+          "(c) Gerben Castel 2011-2013\n" +
           getString(R.string.app_url) + "\n\nIcône :\n\"Hornet Icon Set\"\n(CC BY-NC-ND 3.0)\nhttp://878952.deviantart.com/");
       alertbox.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
         public void onClick(DialogInterface arg0, int arg1) {
