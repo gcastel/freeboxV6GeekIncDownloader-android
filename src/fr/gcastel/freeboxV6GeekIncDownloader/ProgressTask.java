@@ -141,7 +141,7 @@ public class ProgressTask extends AsyncTask<Void, Void, Void> {
 
     // Récupération du logo GeekInc
     if (logoURL != null) {
-      Log.i("ProgressTask", "URL trouv�e : " + logoURL);
+      Log.i("ProgressTask", "URL trouvée : " + logoURL);
       GeekIncLogoDownloadService downService = new GeekIncLogoDownloadService(
         logoURL,  activity.getCacheDir(), logoFileName);
       try {
@@ -184,10 +184,10 @@ public class ProgressTask extends AsyncTask<Void, Void, Void> {
   protected void onPostExecute(Void unused) {
     if (activity != null) {
       if (fluxRSS != null) {
-        Toast.makeText(activity, "Donn�es � jour !", Toast.LENGTH_SHORT).show();
+        Toast.makeText(activity, "Données à jour !", Toast.LENGTH_SHORT).show();
       } else {
         Toast.makeText(activity,
-            "Impossible de r�cup�rer le flux RSS de GeekInc HD !",
+            "Impossible de récupérer le flux RSS de GeekInc HD !",
             Toast.LENGTH_SHORT).show();
         if (activity.listController.getDialog() != null) {
           activity.listController.getDialog().hide();

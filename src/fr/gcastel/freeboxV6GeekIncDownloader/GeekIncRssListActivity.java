@@ -48,7 +48,7 @@ public class GeekIncRssListActivity extends ListActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.main);
     
-    // On r�attache les données à la vue
+    // On réattache les données à la vue
     listController = (GeekIncListController)getLastNonConfigurationInstance();
     if (listController == null) {
     	listController = new GeekIncListController();
