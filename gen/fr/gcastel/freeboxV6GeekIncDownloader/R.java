@@ -38,6 +38,7 @@ public final class R {
         public static final int emptyRSSList=0x7f040005;
         public static final int freeboxURL=0x7f040004;
         public static final int geekIncLogoFileName=0x7f040002;
+        public static final int geekIncLogoLabel=0x7f040008;
         public static final int geekIncRSSFeedURL=0x7f040003;
         public static final int savePassword=0x7f040006;
         public static final int savedPasswordPreferencesKey=0x7f040007;
