@@ -15,17 +15,22 @@
 */
 package fr.gcastel.freeboxV6GeekIncDownloader.services;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -91,9 +96,16 @@ public class FreeboxDownloaderService extends AsyncTask<String, Void, Void> {
   
   
   private String loginFreebox(String password) throws UnsupportedEncodingException, ClientProtocolException, IOException {
+<<<<<<< HEAD
     String result = "";
 
     // PrÃ©paration des paramÃ¨tres
+=======
+    String cookieFbx = "";
+    String csrfToken = "";
+    
+    // Préparation des paramètres
+>>>>>>> Modification du fonctionnement de la freebox V6 â€¦ :(
     HttpPost postReq = new HttpPost(urlFreebox + "/login.php");
     List<NameValuePair> parametres = new ArrayList<NameValuePair>();
     parametres.add(new BasicNameValuePair("login", "freebox"));
@@ -117,17 +129,50 @@ public class FreeboxDownloaderService extends AsyncTask<String, Void, Void> {
 
     // Ok ? (302 = moved = redirection)
     if (response.getStatusLine().getStatusCode() == 302) {
-      Header cookie = response.getFirstHeader("Set-Cookie");      result = cookie.getValue();
+      Header cookie = response.getFirstHeader("Set-Cookie");
+      cookieFbx = cookie.getValue();
       
       // Extraction du cookie FBXSID
-      result = result.substring(result.indexOf("FBXSID=\""), result.indexOf("\";")+1);
-      Log.d(TAG, "Cookie = " + result);
+      cookieFbx = cookieFbx.substring(cookieFbx.indexOf("FBXSID=\""), cookieFbx.indexOf("\";")+1);
+      Log.d(TAG, "Cookie = " + cookieFbx);
     } else {
       Log.d(TAG, "Erreur d'authentification - statusCode = " + response.getStatusLine().getStatusCode()  + " - reason = " + response.getStatusLine().getReasonPhrase());
       prepareAlertDialog("Erreur d'authentification");
     }
     
-    return result;
+    // On a le cookie, il nous manque le csrf_token
+    // On récupère la page download !
+    HttpGet downloadPageReq = new HttpGet(urlFreebox + "/download.php");
+    downloadPageReq.setHeader("Cookie", "FBXSID=\"" + cookieFbx + "\";");
+    response = httpclient.execute(downloadPageReq);
+
+    // Ok ?
+    if (response.getStatusLine().getStatusCode() == 200) {
+      HttpEntity entity = response.getEntity();
+      InputStream contentStream = entity.getContent();
+      
+      BufferedReader br = new BufferedReader(new InputStreamReader(contentStream));
+      String line = br.readLine();
+      
+      while (line != null) {
+        if (line.contains("input type=\"hidden\" name=\"csrf_token\"")) {
+        	csrfToken = line.substring(line.indexOf("value=\"") + "value=\"".length(), line.lastIndexOf("\""));
+        	break;
+        }
+    	line = br.readLine();
+      }
+      
+      br.close();
+      contentStream.close();
+
+      Log.d(TAG, "csrfToken = " + csrfToken);
+    } else {
+      Log.d(TAG, "Erreur d'authentification - statusCode = " + response.getStatusLine().getStatusCode()  + " - reason = " + response.getStatusLine().getReasonPhrase());
+      prepareAlertDialog("Erreur d'authentification");
+    }
+
+    // C'est moche, mais ça me permet de corriger ça vite fait...
+    return cookieFbx+ "<-->" + csrfToken;
   }
   
   private void prepareAlertDialog(String message) {
@@ -148,13 +193,22 @@ public class FreeboxDownloaderService extends AsyncTask<String, Void, Void> {
   }
 
   
+<<<<<<< HEAD
   private void launchDownload(String cookie, String url) throws UnsupportedEncodingException, ClientProtocolException, IOException {
     // PrÃ©paration des paramÃ¨tres
+=======
+  private void launchDownload(String cookieCSRF, String url) throws UnsupportedEncodingException, ClientProtocolException, IOException {
+    int splitPos = cookieCSRF.indexOf("<-->");
+	String cookie = cookieCSRF.substring(0, splitPos);
+	String csrfToken = cookieCSRF.substring(splitPos + 4);  
+	// Préparation des paramètres
+>>>>>>> Modification du fonctionnement de la freebox V6 â€¦ :(
     HttpPost postReq = new HttpPost(urlFreebox + "/download.cgi");
     List<NameValuePair> parametres = new ArrayList<NameValuePair>();
     parametres.add(new BasicNameValuePair("url", url));
     parametres.add(new BasicNameValuePair("user", "freebox"));
     parametres.add(new BasicNameValuePair("method", "download.http_add"));
+    parametres.add(new BasicNameValuePair("csrf_token", csrfToken));
     postReq.setEntity(new UrlEncodedFormEntity(parametres));
     
     // Mise en place des headers
