@@ -105,7 +105,7 @@ public class ProgressTask extends AsyncTask<Void, Void, Void> {
     int indexImage = fluxRSS.indexOf("<image>", indexChannel + 1);
     int indexURL = fluxRSS.indexOf("<url>", indexImage + 1);
 
-    // Extraction jusqu'� </url>
+    // Extraction jusqu'à </url>
     return fluxRSS.substring(indexURL + 5,
         fluxRSS.indexOf("</url>", indexURL));
   }
@@ -128,7 +128,7 @@ public class ProgressTask extends AsyncTask<Void, Void, Void> {
     publishProgress();
 
     // Parsing
-    String logoURL = null;
+    String logoURL;
     try {
       logoURL = getGeekIncLogoURL();
     } catch (Exception ex) {
@@ -184,7 +184,7 @@ public class ProgressTask extends AsyncTask<Void, Void, Void> {
   protected void onPostExecute(Void unused) {
     if (activity != null) {
       if (fluxRSS != null) {
-        Toast.makeText(activity, "Données à jour !", Toast.LENGTH_SHORT).show();
+        Toast.makeText(activity, activity.getString(R.string.UpdatedData), Toast.LENGTH_SHORT).show();
       } else {
         Toast.makeText(activity,
             "Impossible de récupérer le flux RSS de GeekInc HD !",
