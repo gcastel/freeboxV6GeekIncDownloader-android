@@ -12,4 +12,6 @@
     <string name="UpdatedData">Données à jour !</string>
     <string name="refreshButtonTitle">Mettre à jour</string>
     <string name="aboutButtonTitle">A propos</string>
+    <string name="NeedWifiToDownload">Vous devez être connecté en Wifi pour accéder à la freebox
+    </string>
 </resources>

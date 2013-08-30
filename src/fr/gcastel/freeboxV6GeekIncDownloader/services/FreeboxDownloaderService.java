@@ -44,11 +44,11 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
+
+import fr.gcastel.freeboxV6GeekIncDownloader.utils.ConnectionTools;
 
 /**
  * Le service de téléchargement via freebox
@@ -56,7 +56,7 @@ import android.widget.Toast;
  * @author Gerben
  */
 public class FreeboxDownloaderService extends AsyncTask<String, Void, Void> {
-	private static final String TAG = "FreeboxDownloaderService";
+  private static final String TAG = "FreeboxDownloaderService";
   private final String urlFreebox;
   private Context zeContext;
   private boolean echec = false;
@@ -67,7 +67,7 @@ public class FreeboxDownloaderService extends AsyncTask<String, Void, Void> {
   private enum DialogEnCours {
     NONE,
     PROGRESS,
-    ALERT;
+    ALERT
   }
   
   private DialogEnCours dialogueEnCours = DialogEnCours.NONE;
@@ -84,17 +84,6 @@ public class FreeboxDownloaderService extends AsyncTask<String, Void, Void> {
     dialogueEnCours = DialogEnCours.PROGRESS;
   }
 
-  public boolean isConnectedViaWifi() {
-    boolean result = false;
-    if (zeContext != null) {
-      ConnectivityManager cm = (ConnectivityManager) zeContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-      NetworkInfo info = cm.getActiveNetworkInfo();
-      result = (info != null) && (info.getType() == ConnectivityManager.TYPE_WIFI); 
-    }
-    return result;
-  }
-  
-  
   private String loginFreebox(String password) throws UnsupportedEncodingException, ClientProtocolException, IOException {
     String cookieFbx = "";
     String csrfToken = "";
@@ -180,7 +169,6 @@ public class FreeboxDownloaderService extends AsyncTask<String, Void, Void> {
     alertbox.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface arg0, int arg1) {
          dialogueEnCours = DialogEnCours.NONE;
-         return;
       }
     });
     alertbox.show();
@@ -247,7 +235,7 @@ public class FreeboxDownloaderService extends AsyncTask<String, Void, Void> {
   @Override
   protected void onPreExecute() {
     super.onPreExecute();
-    if (!isConnectedViaWifi()) {
+    if (!ConnectionTools.isConnectedViaWifi(zeContext)) {
       Toast.makeText(zeContext, "Vous devez être connecté en Wifi pour accéder à la freebox", Toast.LENGTH_SHORT).show();
       bypassTraitement = true;
     } else {
