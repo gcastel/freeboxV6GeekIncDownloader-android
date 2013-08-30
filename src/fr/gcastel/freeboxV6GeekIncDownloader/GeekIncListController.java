@@ -94,7 +94,7 @@ public class GeekIncListController {
    * Mise à jour de la vue avec les données en cours
    */
   private void updateView(GeekIncRssListActivity activity) {
-    // Le logo est-il pr�sent
+    // Le logo est-il présent
     File geekIncLogoFile = new File(
         activity.getCacheDir(),
         activity.getString(R.string.geekIncLogoFileName));

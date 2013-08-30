@@ -18,6 +18,7 @@ package fr.gcastel.freeboxV6GeekIncDownloader;
 import java.util.List;
 
 import fr.gcastel.freeboxV6GeekIncDownloader.datas.PodcastElement;
+import fr.gcastel.freeboxV6GeekIncDownloader.services.FreeboxDiscoveryService;
 import fr.gcastel.freeboxV6GeekIncDownloader.services.FreeboxDownloaderService;
 import fr.gcastel.freeboxV6GeekIncDownloader.utils.ConnectionTools;
 
@@ -150,11 +151,13 @@ public class ListPodcastAdapter extends BaseAdapter {
 							.getString(R.string.freeboxURL), activity, dialog);
 				}
 				if (fbxService.getStatus() == AsyncTask.Status.PENDING) {
+                    FreeboxDiscoveryService discoveryService = new FreeboxDiscoveryService(activity);
+                    discoveryService.execute();
 					if (ConnectionTools.isConnectedViaWifi(activity)) {
 					  askForPassword(elements.get(position).getUrl());
-					} else {
+					}/* else {
 			      Toast.makeText(activity, activity.getString(R.string.NeedWifiToDownload), Toast.LENGTH_SHORT).show();
-					}
+					}*/
 				}
 			}
 		});
