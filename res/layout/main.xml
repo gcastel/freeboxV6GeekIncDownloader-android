@@ -3,8 +3,8 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
-   <ImageView android:layout_height="wrap_content" android:src="@drawable/icon" android:layout_width="wrap_content" android:id="@+id/geekIncHDLogo" android:layout_gravity="center" android:visibility="invisible" android:contentDescription="@string/geekIncLogoLabel"></ImageView>
-   <ListView android:layout_height="fill_parent" android:layout_width="fill_parent" android:id="@android:id/list"></ListView>
+   <ImageView android:layout_height="wrap_content" android:src="@drawable/icon" android:layout_width="wrap_content" android:id="@+id/geekIncHDLogo" android:layout_gravity="center" android:visibility="invisible" android:contentDescription="@string/geekIncLogoLabel"/>
+   <ListView android:layout_height="fill_parent" android:layout_width="fill_parent" android:id="@android:id/list"/>
    <ViewStub android:id="@android:id/empty"
           android:layout_width="fill_parent"
           android:layout_height="fill_parent"

@@ -4,6 +4,6 @@
   android:layout_width="fill_parent"
   android:layout_height="wrap_content"
   android:padding="7dp" android:orientation="vertical">
-    <TextView android:layout_width="fill_parent" android:id="@+id/titleItem" android:layout_height="wrap_content" android:textSize="14sp"></TextView>
-    <TextView android:layout_width="fill_parent" android:id="@+id/dateItem" android:layout_height="wrap_content" android:textSize="12sp" android:gravity="right"></TextView>
+    <TextView android:layout_width="fill_parent" android:id="@+id/titleItem" android:layout_height="wrap_content" android:textSize="14sp"/>
+    <TextView android:layout_width="fill_parent" android:id="@+id/dateItem" android:layout_height="wrap_content" android:textSize="12sp" android:gravity="right"/>
 </LinearLayout>
