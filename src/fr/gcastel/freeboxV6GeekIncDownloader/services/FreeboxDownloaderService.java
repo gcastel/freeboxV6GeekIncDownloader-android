@@ -49,6 +49,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import fr.gcastel.freeboxV6GeekIncDownloader.utils.ConnectionTools;
+import fr.gcastel.freeboxV6GeekIncDownloader.utils.FreeboxDiscovery;
 
 /**
  * Le service de téléchargement via freebox
@@ -212,37 +213,46 @@ public class FreeboxDownloaderService extends AsyncTask<String, Void, Void> {
       prepareAlertDialog("Erreur lors du lancement du téléchargement.");
     }  	
   }
-  
-  
-  @Override
-  protected Void doInBackground(String... params) {
-    try {
-      if (!bypassTraitement) {
-        String cookie = loginFreebox(params[1]);
-        if (alertDialogMessage == null) {  
-          launchDownload(cookie, params[0]);
-        } else {
-          echec = true;
+
+
+    @Override
+    protected Void doInBackground(String... params) {
+        try {
+            if (!bypassTraitement) {
+                String freeboxDiscoveryString = FreeboxDiscovery.findFreebox();
+
+                if (freeboxDiscoveryString != null) {
+                    Log.d("[FreeboxDiscovery]", "Résultat " + freeboxDiscoveryString);
+                } else {
+                    Log.d("[FreeboxDiscovery]", "Freebox non trouvée");
+                }
+
+                String cookie = loginFreebox(params[1]);
+                if (alertDialogMessage == null) {
+                    launchDownload(cookie, params[0]);
+                } else {
+                    echec = true;
+                }
+            }
+        } catch (Exception e) {
+            Log.d("[FreeboxDownloaderService]", "Exception lors du traitement", e);
+            echec = true;
         }
-      }
-    } catch(Exception e) {
-      echec = true;
+        return null;
     }
-    return null;
-  }
 
 
-  @Override
+    @Override
   protected void onPreExecute() {
     super.onPreExecute();
-    if (!ConnectionTools.isConnectedViaWifi(zeContext)) {
-      Toast.makeText(zeContext, "Vous devez être connecté en Wifi pour accéder à la freebox", Toast.LENGTH_SHORT).show();
-      bypassTraitement = true;
-    } else {
+//    if (!ConnectionTools.isConnectedViaWifi(zeContext)) {
+//      Toast.makeText(zeContext, "Vous devez être connecté en Wifi pour accéder à la freebox", Toast.LENGTH_SHORT).show();
+//      bypassTraitement = true;
+//    } else {
       if (dialog != null) {
         dialog.show();
       }
-    }
+//    }
   }
 
   @Override

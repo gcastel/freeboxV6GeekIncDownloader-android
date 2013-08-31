@@ -13,12 +13,9 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-package fr.gcastel.freeboxV6GeekIncDownloader.services;
+package fr.gcastel.freeboxV6GeekIncDownloader.utils;
 
-import android.content.Context;
-import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -37,18 +34,23 @@ import java.io.InputStreamReader;
  *
  * @author Gerben Castel
  */
-public class FreeboxDiscoveryService extends AsyncTask<Void, Void, String> {
+public class FreeboxDiscovery {
 
-    private final Context applicationContext;
-
-    public FreeboxDiscoveryService(Context context) {
-        applicationContext = context;
+    private FreeboxDiscovery() {
+        throw new AssertionError();
     }
 
-    @Override
-    protected String doInBackground(Void... voids) {
-        Log.d("[FreeboxDiscoveryService]", "Recherche d'une freebox");
-        String result = null;
+    /**
+     * Lance la recherche d'une freebox et retourne le code JSON
+     * obtenu
+     *
+     * Ex : {"uid":"598663ccd3b3b02e13d580524066d54c","device_name":"Freebox Server","api_version":"1.0","api_base_url":"\/api\/","device_type":"FreeboxServer1,1"}
+     *
+     * @return la chaîne JSON obtenue lors de la détection ou null si non trouvée
+     */
+    public static String findFreebox() {
+        Log.d("[FreeboxDiscovery]", "Recherche d'une freebox");
+        String result = "";
         HttpGet getReq = new HttpGet("http://mafreebox.freebox.fr/api_version");
         try {
             HttpClient httpclient = new DefaultHttpClient();
@@ -61,28 +63,21 @@ public class FreeboxDiscoveryService extends AsyncTask<Void, Void, String> {
                 String line = br.readLine();
 
                 while (line != null) {
-                    line = br.readLine();
                     result += line;
+                    line = br.readLine();
                 }
 
                 br.close();
                 content.close();
             } else {
-                Log.d("[FreeboxDiscoveryService]", "Freebox non trouvée, status code : "  + response.getStatusLine().getStatusCode());
+                Log.d("[FreeboxDiscovery]", "Freebox non trouvée, status code : "  + response.getStatusLine().getStatusCode());
+                result = null;
             }
         } catch (Exception e) {
-            Log.d("[FreeboxDiscoveryService]", "Network exception", e);
+            Log.d("[FreeboxDiscovery]", "Network exception", e);
             result = null;
         }
-        return result;
-    }
 
-    protected void onPostExecute(String result) {
-        if (result != null) {
-            Toast.makeText(applicationContext, "Résultat " + result, Toast.LENGTH_LONG).show();
-        } else {
-            Log.d("[FreeboxDiscoveryService]", "Freebox non trouvée");
-            Toast.makeText(applicationContext, "Impossible de trouver la freebox", Toast.LENGTH_SHORT).show();
-        }
+        return result;
     }
 }
