@@ -4,7 +4,6 @@
     <string name="app_url">http://geeketfier.free.fr</string>    
     <string name="geekIncLogoFileName">geekIncLogo.png</string>
     <string name="geekIncRSSFeedURL">http://feeds.feedburner.com/GeekIncHD</string>
-    <string name="freeboxURL">http://mafreebox.freebox.fr</string>
     <string name="emptyRSSList">Aucun épisode trouvé</string>
     <string name="savePassword">Enregistrer le mot de passe</string>
     <string name="savedPasswordPreferencesKey">SAVED_PASSWORD_PREFERENCES_KEY</string>
@@ -14,4 +13,8 @@
     <string name="aboutButtonTitle">A propos</string>
     <string name="NeedWifiToDownload">Vous devez être connecté en Wifi pour accéder à la freebox
     </string>
+    <string name="connectingToFreebox">Connexion à la freebox</string>
+    <string name="cantConnectToFreebox">Impossible de se connecter à la freebox</string>
+    <string name="downloadLaunched">Téléchargement lancé !</string>
+    <string name="connecting">Connexion à la freebox</string>
 </resources>

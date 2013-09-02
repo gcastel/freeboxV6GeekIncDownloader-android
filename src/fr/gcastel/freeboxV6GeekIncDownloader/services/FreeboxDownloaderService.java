@@ -39,6 +39,7 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -48,7 +49,8 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-import fr.gcastel.freeboxV6GeekIncDownloader.utils.ConnectionTools;
+import fr.gcastel.freeboxV6GeekIncDownloader.R;
+import fr.gcastel.freeboxV6GeekIncDownloader.utils.FreeboxAuthorization;
 import fr.gcastel.freeboxV6GeekIncDownloader.utils.FreeboxDiscovery;
 
 /**
@@ -58,13 +60,14 @@ import fr.gcastel.freeboxV6GeekIncDownloader.utils.FreeboxDiscovery;
  */
 public class FreeboxDownloaderService extends AsyncTask<String, Void, Void> {
   private static final String TAG = "FreeboxDownloaderService";
-  private final String urlFreebox;
-  private Context zeContext;
+  private String urlFreebox;
+  private Activity zeActivity;
   private boolean echec = false;
   private Dialog dialog;
   private String alertDialogMessage = null;
   private boolean bypassTraitement = false;
-  
+  private final static String APP_TOKEN_KEY = "APP_TOKEN_KEY";
+
   private enum DialogEnCours {
     NONE,
     PROGRESS,
@@ -75,12 +78,9 @@ public class FreeboxDownloaderService extends AsyncTask<String, Void, Void> {
   
   /**
    * Instanciation
-   * 
-   * @param inUrlFreebox l'url à utiliser pour se connecter à la freebox
    */
-  public FreeboxDownloaderService(String inUrlFreebox, Context context, ProgressDialog inDialog) {
-    urlFreebox = inUrlFreebox;
-    zeContext = context;
+  public FreeboxDownloaderService(Activity context, ProgressDialog inDialog) {
+    zeActivity = context;
     dialog = inDialog;
     dialogueEnCours = DialogEnCours.PROGRESS;
   }
@@ -165,7 +165,7 @@ public class FreeboxDownloaderService extends AsyncTask<String, Void, Void> {
   }
 
   private void showAlertDialog() {
-    AlertDialog.Builder alertbox = new AlertDialog.Builder(zeContext);
+    AlertDialog.Builder alertbox = new AlertDialog.Builder(zeActivity);
     alertbox.setMessage(alertDialogMessage);
     alertbox.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface arg0, int arg1) {
@@ -219,20 +219,31 @@ public class FreeboxDownloaderService extends AsyncTask<String, Void, Void> {
     protected Void doInBackground(String... params) {
         try {
             if (!bypassTraitement) {
-                String freeboxDiscoveryString = FreeboxDiscovery.findFreebox();
+                // Recherche de la freebox
+                urlFreebox = FreeboxDiscovery.findFreeboxAPIURL();
 
-                if (freeboxDiscoveryString != null) {
-                    Log.d("[FreeboxDiscovery]", "Résultat " + freeboxDiscoveryString);
-                } else {
-                    Log.d("[FreeboxDiscovery]", "Freebox non trouvée");
-                }
-
-                String cookie = loginFreebox(params[1]);
-                if (alertDialogMessage == null) {
-                    launchDownload(cookie, params[0]);
-                } else {
+                if (urlFreebox == null) {
                     echec = true;
+                    return null;
                 }
+
+                // Recherche de l'app token
+                String appToken = zeActivity.getPreferences(Context.MODE_PRIVATE).getString(APP_TOKEN_KEY, "");
+                if (appToken == null || ("".equals(appToken))) {
+                    // Si l'app token n'est pas dispo
+                    String authResponse = FreeboxAuthorization.sendAuthorizationRequest(zeActivity, urlFreebox);
+                    Log.d("[FreeboxDownloaderService]", "Auth String : " + authResponse);
+                } else {
+                    Log.d("[FreeboxDownloaderService]", "App token dispo : " + appToken);
+                }
+                return null;
+
+//                String cookie = loginFreebox(params[1]);
+//                if (alertDialogMessage == null) {
+//                    launchDownload(cookie, params[0]);
+//                } else {
+//                    echec = true;
+//                }
             }
         } catch (Exception e) {
             Log.d("[FreeboxDownloaderService]", "Exception lors du traitement", e);
@@ -245,8 +256,8 @@ public class FreeboxDownloaderService extends AsyncTask<String, Void, Void> {
     @Override
   protected void onPreExecute() {
     super.onPreExecute();
-//    if (!ConnectionTools.isConnectedViaWifi(zeContext)) {
-//      Toast.makeText(zeContext, "Vous devez être connecté en Wifi pour accéder à la freebox", Toast.LENGTH_SHORT).show();
+//    if (!ConnectionTools.isConnectedViaWifi(zeActivity)) {
+//      Toast.makeText(zeActivity, "Vous devez être connecté en Wifi pour accéder à la freebox", Toast.LENGTH_SHORT).show();
 //      bypassTraitement = true;
 //    } else {
       if (dialog != null) {
@@ -267,35 +278,10 @@ public class FreeboxDownloaderService extends AsyncTask<String, Void, Void> {
     
     if (!bypassTraitement) {
       if (echec) {
-        Toast.makeText(zeContext, "Impossible de se connecter à la freebox", Toast.LENGTH_SHORT).show();
+        Toast.makeText(zeActivity, zeActivity.getString(R.string.cantConnectToFreebox), Toast.LENGTH_SHORT).show();
       } else {
-        Toast.makeText(zeContext, "Téléchargement lancé !", Toast.LENGTH_SHORT).show();
+        Toast.makeText(zeActivity, zeActivity.getString(R.string.downloadLaunched), Toast.LENGTH_SHORT).show();
       }
     }
-  }
-  
-  public void attach(Context inContext) {
-    zeContext = inContext;
-    switch(dialogueEnCours) {
-    case PROGRESS :
-      dialog = new ProgressDialog(zeContext);
-      dialog.setCancelable(true);
-      ((ProgressDialog)dialog).setMessage("Connexion à la freebox");
-      ((ProgressDialog)dialog).setProgressStyle(ProgressDialog.STYLE_SPINNER);
-      dialog.show();
-      break;
-    case ALERT :
-      prepareAlertDialog(alertDialogMessage);
-      showAlertDialog();      
-      break;
-    case NONE:
-    default:
-      break;
-    }
-  }
-  
-  public void detach() {
-    zeContext = null;
-    dialog = null;
   }
 }

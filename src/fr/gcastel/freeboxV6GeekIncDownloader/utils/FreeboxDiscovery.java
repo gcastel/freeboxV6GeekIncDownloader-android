@@ -21,6 +21,11 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -53,7 +58,13 @@ public class FreeboxDiscovery {
         String result = "";
         HttpGet getReq = new HttpGet("http://mafreebox.freebox.fr/api_version");
         try {
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpParams httpParameters = new BasicHttpParams();
+
+            // Mise en place de timeouts
+            HttpConnectionParams.setConnectionTimeout(httpParameters, 5000);
+            HttpConnectionParams.setSoTimeout(httpParameters, 5000);
+
+            HttpClient httpclient = new DefaultHttpClient(httpParameters);
             HttpResponse response = httpclient.execute(getReq);
 
             // Trouvé ?
@@ -79,5 +90,29 @@ public class FreeboxDiscovery {
         }
 
         return result;
+    }
+
+    public static String findFreeboxAPIURL()  {
+        String freeboxDiscoveryString = FreeboxDiscovery.findFreebox();
+        if (freeboxDiscoveryString != null) {
+            Log.d("[FreeboxDiscovery]", "Résultat discovery : " + freeboxDiscoveryString);
+            JSONObject jObject;
+            String urlFreebox;
+            try {
+                jObject = new JSONObject(freeboxDiscoveryString);
+
+                urlFreebox = "http://mafreebox.freebox.fr" +
+                        jObject.getString("api_base_url") +
+                        "v" + jObject.getString("api_version");
+            } catch (JSONException e) {
+                Log.e("[FreeboxDiscovery]", "Erreur de parsing JSON: ",e);
+                return null;
+            }
+            Log.d("[FreeboxDiscovery]", "L'URL de l'API freebox est donc : " + urlFreebox);
+            return urlFreebox;
+        } else {
+            Log.d("[FreeboxDiscovery]", "Freebox non trouvée");
+            return null;
+        }
     }
 }
