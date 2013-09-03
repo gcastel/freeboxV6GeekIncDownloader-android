@@ -17,19 +17,9 @@ package fr.gcastel.freeboxV6GeekIncDownloader.utils;
 
 import android.util.Log;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
 /**
  * Le service de découverte de la freebox
@@ -55,41 +45,9 @@ public class FreeboxDiscovery {
      */
     public static String findFreebox() {
         Log.d("[FreeboxDiscovery]", "Recherche d'une freebox");
-        String result = "";
         HttpGet getReq = new HttpGet("http://mafreebox.freebox.fr/api_version");
-        try {
-            HttpParams httpParameters = new BasicHttpParams();
 
-            // Mise en place de timeouts
-            HttpConnectionParams.setConnectionTimeout(httpParameters, 5000);
-            HttpConnectionParams.setSoTimeout(httpParameters, 5000);
-
-            HttpClient httpclient = new DefaultHttpClient(httpParameters);
-            HttpResponse response = httpclient.execute(getReq);
-
-            // Trouvé ?
-            if (response.getStatusLine().getStatusCode() == 200) {
-                InputStream content = response.getEntity().getContent();
-                BufferedReader br = new BufferedReader(new InputStreamReader(content));
-                String line = br.readLine();
-
-                while (line != null) {
-                    result += line;
-                    line = br.readLine();
-                }
-
-                br.close();
-                content.close();
-            } else {
-                Log.d("[FreeboxDiscovery]", "Freebox non trouvée, status code : "  + response.getStatusLine().getStatusCode());
-                result = null;
-            }
-        } catch (Exception e) {
-            Log.d("[FreeboxDiscovery]", "Network exception", e);
-            result = null;
-        }
-
-        return result;
+        return NetworkTools.executeHTTPRequest("[FreeboxDiscovery]", getReq);
     }
 
     public static String findFreeboxAPIURL()  {
@@ -103,7 +61,7 @@ public class FreeboxDiscovery {
 
                 urlFreebox = "http://mafreebox.freebox.fr" +
                         jObject.getString("api_base_url") +
-                        "v" + jObject.getString("api_version");
+                        "v" + jObject.getString("api_version").replace(".0","");
             } catch (JSONException e) {
                 Log.e("[FreeboxDiscovery]", "Erreur de parsing JSON: ",e);
                 return null;

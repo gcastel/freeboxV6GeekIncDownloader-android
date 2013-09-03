@@ -38,6 +38,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -45,6 +46,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
@@ -60,13 +62,19 @@ import fr.gcastel.freeboxV6GeekIncDownloader.utils.FreeboxDiscovery;
  */
 public class FreeboxDownloaderService extends AsyncTask<String, Void, Void> {
   private static final String TAG = "FreeboxDownloaderService";
-  private String urlFreebox;
+  private String urlFreeboxAPI = null;
   private Activity zeActivity;
   private boolean echec = false;
   private Dialog dialog;
   private String alertDialogMessage = null;
   private boolean bypassTraitement = false;
   private final static String APP_TOKEN_KEY = "APP_TOKEN_KEY";
+
+  // Le tracking ID utilisé pour le challenge d'authentification freebox
+  private String trackId = null;
+
+  // Le challenge en cours avec la freebox
+  private String challenge = null;
 
   private enum DialogEnCours {
     NONE,
@@ -90,7 +98,7 @@ public class FreeboxDownloaderService extends AsyncTask<String, Void, Void> {
     String csrfToken = "";
     
     // Préparation des paramètres
-    HttpPost postReq = new HttpPost(urlFreebox + "/login.php");
+    HttpPost postReq = new HttpPost(urlFreeboxAPI + "/login.php");
     List<NameValuePair> parametres = new ArrayList<NameValuePair>();
     parametres.add(new BasicNameValuePair("login", "freebox"));
     parametres.add(new BasicNameValuePair("passwd", password));
@@ -126,7 +134,7 @@ public class FreeboxDownloaderService extends AsyncTask<String, Void, Void> {
     
     // On a le cookie, il nous manque le csrf_token
     // On récupère la page download !
-    HttpGet downloadPageReq = new HttpGet(urlFreebox + "/download.php");
+    HttpGet downloadPageReq = new HttpGet(urlFreeboxAPI + "/download.php");
     downloadPageReq.setHeader("Cookie", "FBXSID=\"" + cookieFbx + "\";");
     response = httpclient.execute(downloadPageReq);
 
@@ -181,7 +189,7 @@ public class FreeboxDownloaderService extends AsyncTask<String, Void, Void> {
 	String cookie = cookieCSRF.substring(0, splitPos);
 	String csrfToken = cookieCSRF.substring(splitPos + 4);  
 	// Préparation des paramètres
-    HttpPost postReq = new HttpPost(urlFreebox + "/download.cgi");
+    HttpPost postReq = new HttpPost(urlFreeboxAPI + "/download.cgi");
     List<NameValuePair> parametres = new ArrayList<NameValuePair>();
     parametres.add(new BasicNameValuePair("url", url));
     parametres.add(new BasicNameValuePair("user", "freebox"));
@@ -197,10 +205,8 @@ public class FreeboxDownloaderService extends AsyncTask<String, Void, Void> {
     HttpParams httpParameters = new BasicHttpParams();
     
     // Mise en place de timeouts
-    int timeoutConnection = 5000;
-    HttpConnectionParams.setConnectionTimeout(httpParameters, timeoutConnection);
-    int timeoutSocket = 5000;
-    HttpConnectionParams.setSoTimeout(httpParameters, timeoutSocket);
+    HttpConnectionParams.setConnectionTimeout(httpParameters, 5000);
+    HttpConnectionParams.setSoTimeout(httpParameters, 5000);
     HttpClient httpclient = new DefaultHttpClient(httpParameters);
     HttpParams params = httpclient.getParams();
     HttpClientParams.setRedirecting(params, false); 
@@ -219,23 +225,57 @@ public class FreeboxDownloaderService extends AsyncTask<String, Void, Void> {
     protected Void doInBackground(String... params) {
         try {
             if (!bypassTraitement) {
-                // Recherche de la freebox
-                urlFreebox = FreeboxDiscovery.findFreeboxAPIURL();
+                if (urlFreeboxAPI == null) {
+                    // Recherche de la freebox
+                    urlFreeboxAPI = FreeboxDiscovery.findFreeboxAPIURL();
+                    if (urlFreeboxAPI == null) {
+                        echec = true;
+                        return null;
+                    }
+                }
 
-                if (urlFreebox == null) {
-                    echec = true;
-                    return null;
+                // Requête d'autorisation en cours
+                if (trackId != null) {
+                    challenge = FreeboxAuthorization.askForChallengeAfterTracking(urlFreeboxAPI, trackId);
+
+                    // On annule la requête de toutes façons (ok ou nok)
+                    trackId = null;
                 }
 
                 // Recherche de l'app token
                 String appToken = zeActivity.getPreferences(Context.MODE_PRIVATE).getString(APP_TOKEN_KEY, "");
                 if (appToken == null || ("".equals(appToken))) {
-                    // Si l'app token n'est pas dispo
-                    String authResponse = FreeboxAuthorization.sendAuthorizationRequest(zeActivity, urlFreebox);
+                    // Si l'app token n'est pas dispo, on en demande un
+                    String authResponse = FreeboxAuthorization.sendAuthorizationRequest(zeActivity, urlFreeboxAPI);
                     Log.d("[FreeboxDownloaderService]", "Auth String : " + authResponse);
+
+                    JSONObject jsonAuth = new JSONObject(authResponse);
+                    if (jsonAuth.getBoolean("success")) {
+                        JSONObject authData = jsonAuth.getJSONObject("result");
+
+                        SharedPreferences.Editor editor = zeActivity.getPreferences(Context.MODE_PRIVATE).edit();
+                        editor.putString(APP_TOKEN_KEY, authData.getString("app_token"));
+                        editor.commit();
+
+                        // On récupère l'id de tracking pour vérifier la validation par l'utilisateur
+                        trackId = authData.getString("track_id");
+                        prepareAlertDialog("Autorisez cette application sur l'écran LCD de la Freebox et relancez le téléchargement.");
+                    }
                 } else {
                     Log.d("[FreeboxDownloaderService]", "App token dispo : " + appToken);
+
+                    if (challenge == null) {
+                        challenge = FreeboxAuthorization.askForChallenge(urlFreeboxAPI);
+                    }
                 }
+
+                // Si on a tous les composants, on peut se loguer !
+                if ((appToken!= null) && (challenge != null)) {
+                    Log.d("[FreeboxDownloaderService]", "On a tout pour se loguer");
+                    String sessionToken = FreeboxAuthorization.openSession(urlFreeboxAPI,appToken,challenge);
+                    Log.d("[FreeboxDownloaderService]", "Session token : " + sessionToken);
+                }
+
                 return null;
 
 //                String cookie = loginFreebox(params[1]);
@@ -256,7 +296,7 @@ public class FreeboxDownloaderService extends AsyncTask<String, Void, Void> {
     @Override
   protected void onPreExecute() {
     super.onPreExecute();
-//    if (!ConnectionTools.isConnectedViaWifi(zeActivity)) {
+//    if (!NetworkTools.isConnectedViaWifi(zeActivity)) {
 //      Toast.makeText(zeActivity, "Vous devez être connecté en Wifi pour accéder à la freebox", Toast.LENGTH_SHORT).show();
 //      bypassTraitement = true;
 //    } else {

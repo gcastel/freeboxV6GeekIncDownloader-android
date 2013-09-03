@@ -19,7 +19,6 @@ import java.util.List;
 
 import fr.gcastel.freeboxV6GeekIncDownloader.datas.PodcastElement;
 import fr.gcastel.freeboxV6GeekIncDownloader.services.FreeboxDownloaderService;
-import fr.gcastel.freeboxV6GeekIncDownloader.utils.ConnectionTools;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -35,7 +34,6 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.os.AsyncTask;
-import android.widget.Toast;
 
 public class ListPodcastAdapter extends BaseAdapter {
 
@@ -148,7 +146,7 @@ public class ListPodcastAdapter extends BaseAdapter {
 					fbxService = new FreeboxDownloaderService(activity, dialog);
 				}
 				if (fbxService.getStatus() == AsyncTask.Status.PENDING) {
-//					if (ConnectionTools.isConnectedViaWifi(activity)) {
+//					if (NetworkTools.isConnectedViaWifi(activity)) {
 					  askForPassword(elements.get(position).getUrl());
 //					} else {
 //			           Toast.makeText(activity, activity.getString(R.string.NeedWifiToDownload), Toast.LENGTH_SHORT).show();
