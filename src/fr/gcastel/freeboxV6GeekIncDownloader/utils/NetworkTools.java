@@ -93,6 +93,18 @@ public class NetworkTools {
                 content.close();
             } else {
                 Log.d(logTag, "Erreur d'autorisation, status code : " + response.getStatusLine().getStatusCode());
+                InputStream content = response.getEntity().getContent();
+                BufferedReader br = new BufferedReader(new InputStreamReader(content));
+                String line = br.readLine();
+
+                while (line != null) {
+                    result += line;
+                    line = br.readLine();
+                }
+
+                br.close();
+                content.close();
+                Log.d(logTag, "Contenu " + result);
                 result = null;
             }
         } catch (IOException e) {
