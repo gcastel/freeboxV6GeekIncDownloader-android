@@ -47,7 +47,7 @@ public class FreeboxDiscovery {
         Log.d("[FreeboxDiscovery]", "Recherche d'une freebox");
         HttpGet getReq = new HttpGet("http://mafreebox.freebox.fr/api_version");
 
-        return NetworkTools.executeHTTPRequest("[FreeboxDiscovery]", getReq);
+        return NetworkTools.executeHTTPRequest("[FreeboxDiscovery]", getReq, null);
     }
 
     public static String findFreeboxAPIURL()  {

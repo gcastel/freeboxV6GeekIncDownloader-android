@@ -59,10 +59,17 @@ public class NetworkTools {
     /**
      * Exécute la requête HTTP
      *
+     * @param logTag le tag à utiliser pour les logs
      * @param httpUriRequest la requête HTTP à exécuter
+     * @param sessionToken la session à utiliser si nécessaire
      * @return le contenu du résultat
      */
-    public static String executeHTTPRequest(String logTag, HttpUriRequest httpUriRequest) {
+    public static String executeHTTPRequest(String logTag, HttpUriRequest httpUriRequest, String sessionToken) {
+        // Session
+        if (sessionToken != null) {
+          httpUriRequest.setHeader("X-Fbx-App-Auth",sessionToken);
+        }
+
         // Envoi de la requête
         HttpParams httpParameters = new BasicHttpParams();
 

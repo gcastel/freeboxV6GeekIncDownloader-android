@@ -20,7 +20,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.provider.Settings;
-import android.util.Base64;
 import android.util.Log;
 
 import org.apache.http.client.methods.HttpGet;
@@ -92,7 +91,7 @@ public class FreeboxAuthorization {
 
         postReq.setEntity(se);
 
-        return NetworkTools.executeHTTPRequest("[FreeboxAuthorization]", postReq);
+        return NetworkTools.executeHTTPRequest("[FreeboxAuthorization]", postReq, null);
     }
 
     /**
@@ -108,7 +107,7 @@ public class FreeboxAuthorization {
         Log.d("[FreeboxAuthorization]", "Vérification du statut de l'autorisation");
         HttpGet getReq = new HttpGet(urlFreeboxAPI + "/login/authorize/" + trackId);
 
-        String trackResult = NetworkTools.executeHTTPRequest("[FreeboxAuthorization]", getReq);
+        String trackResult = NetworkTools.executeHTTPRequest("[FreeboxAuthorization]", getReq, null);
 
         if (trackResult == null) {
             return null;
@@ -141,7 +140,7 @@ public class FreeboxAuthorization {
         Log.d("[FreeboxAuthorization]", "Demande de challenge");
         HttpGet getReq = new HttpGet(urlFreeboxAPI + "/login/");
 
-        String trackResult = NetworkTools.executeHTTPRequest("[FreeboxAuthorization]", getReq);
+        String trackResult = NetworkTools.executeHTTPRequest("[FreeboxAuthorization]", getReq, null);
 
         if (trackResult == null) {
             return null;
@@ -193,13 +192,13 @@ public class FreeboxAuthorization {
 
         postReq.setEntity(se);
 
-        String result = NetworkTools.executeHTTPRequest("[FreeboxAuthorization]", postReq);
+        String result = NetworkTools.executeHTTPRequest("[FreeboxAuthorization]", postReq, null);
 
         if (result == null) {
             return null;
         }
 
-        JSONObject jsonResponse = null;
+        JSONObject jsonResponse;
         try {
             jsonResponse = new JSONObject(result);
             if (jsonResponse.getBoolean("success")) {
@@ -215,6 +214,16 @@ public class FreeboxAuthorization {
         }
     }
 
+    /**
+     * Calcule le hmac SHA1 pour l'authentification freebox
+     *
+     * @param challenge le challenge à utiliser
+     * @param appToken le token d'application
+     * @return le hmac SHA1 en hexa
+     * @throws UnsupportedEncodingException mauvais encoding
+     * @throws NoSuchAlgorithmException HmacSHA1 introuvable
+     * @throws InvalidKeyException clé invalide
+     */
     private static String hmacsha1(String challenge, String appToken) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException {
         SecretKeySpec key = new SecretKeySpec(appToken.getBytes("UTF-8"), "HmacSHA1");
         Mac mac = Mac.getInstance("HmacSHA1");
@@ -222,6 +231,25 @@ public class FreeboxAuthorization {
 
         byte[] bytes = mac.doFinal(challenge.getBytes("UTF-8"));
 
-        return new String(Base64.encodeToString(bytes, 0));
+        return toHex(bytes);
+    }
+
+    /**
+     * Convertit un tableau de bytes en chaîne hexa
+     *
+     * @param bytes le tableau à convertir
+     * @return la chaîne hexa
+     */
+    private static String toHex(byte[] bytes) {
+        StringBuilder hexString = new StringBuilder();
+        for (byte bEnCours : bytes) {
+            String hex = Integer.toHexString(0xFF & bEnCours);
+            if (hex.length() == 1) {
+                // could use a for loop, but we're only dealing with a single byte
+                hexString.append('0');
+            }
+            hexString.append(hex);
+        }
+        return hexString.toString();
     }
 }
