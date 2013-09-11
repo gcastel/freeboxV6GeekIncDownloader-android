@@ -42,6 +42,8 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class FreeboxAuthorization {
 
+    private final static String APP_ID ="freeboxV6GeekIncDownloader";
+
     private void FreeboxAuthorization() {
         throw new AssertionError();
     }
@@ -75,14 +77,13 @@ public class FreeboxAuthorization {
             versionName = "";
         }
 
-        String deviceId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
         StringEntity se;
         try {
             se = new StringEntity("{\n" +
-                    "   \"app_id\": \"fr.gcastel.freeboxV6GeekIncDownloader\",\n" +
+                    "   \"app_id\": \""+APP_ID +"\",\n" +
                     "   \"app_name\": \"GeekInc Downloader\",\n" +
                     "   \"app_version\": \""+ versionName + "\",\n" +
-                    "   \"device_name\": \"Android v." + Build.VERSION.RELEASE + " - " + deviceId  + "\"\n" +
+                    "   \"device_name\": \"" + Build.MODEL + " - Android v." + Build.VERSION.RELEASE + "\"\n" +
                     "}");
         } catch (UnsupportedEncodingException e) {
            Log.e("[FreeboxAuthorization]", "Exception lors de la création de la requête", e);
@@ -118,6 +119,7 @@ public class FreeboxAuthorization {
             if (jsonResponse.getBoolean("success")) {
                 JSONObject authStatus = jsonResponse.getJSONObject("result");
                 if ("granted".equals(authStatus.getString("status"))) {
+                    Log.d("[FreeboxAuthorization]", "Granted : " + trackResult);
                     challenge = authStatus.getString("challenge");
                 }
             }
@@ -168,17 +170,21 @@ public class FreeboxAuthorization {
      * @param challenge le challenge à utiliser
      * @return l'id de session ou null si échec
      */
-    public static String openSession(String urlFreeboxAPI, String appToken, String challenge) {
+    public static String openSession(Context context, String urlFreeboxAPI, String appToken, String challenge) {
         Log.d("[FreeboxAuthorization]", "Ouverture de session");
 
-        HttpPost postReq = new HttpPost(urlFreeboxAPI + "/login/session/");
 
+        HttpPost postReq = new HttpPost(urlFreeboxAPI + "/login/session/");
+        postReq.setHeader("Content-type", "application/json");
         StringEntity se;
         try {
-            se = new StringEntity("{\n" +
-                    "   \"app_id\": \"fr.gcastel.freeboxV6GeekIncDownloader\",\n" +
-                    "   \"password\": \"" + hmacsha1(challenge,appToken) + "\"\n" +
-                    "}");
+            String entity = "{" +
+                    " \"app_id\": \""+APP_ID +"\"," +
+                    " \"password\": \"" + hmacsha1(challenge,appToken) + "\" " +
+                    "}";
+            se = new StringEntity(entity);
+
+            Log.d("[FreeboxAuthorization]", "Entity : " + entity);
         } catch (UnsupportedEncodingException e) {
             Log.e("[FreeboxAuthorization]", "Exception lors de la création de la requête", e);
             return null;

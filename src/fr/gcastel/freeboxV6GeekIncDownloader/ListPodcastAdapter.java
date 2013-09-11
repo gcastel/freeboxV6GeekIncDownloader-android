@@ -54,7 +54,7 @@ public class ListPodcastAdapter extends BaseAdapter {
 		dialog.setMessage(inActivity.getString(R.string.connectingToFreebox));
 		dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		SAVED_PASSWORD_PREFERENCES_KEY = activity.getString(R.string.savedPasswordPreferencesKey);
-		fbxService = new FreeboxDownloaderService(activity, dialog);
+		fbxService = new FreeboxDownloaderService(activity, dialog, null, null, null);
 	}
 
 	@Override
@@ -143,7 +143,7 @@ public class ListPodcastAdapter extends BaseAdapter {
 			public void onClick(View v) {
 				// Une tâche ne peut être exécutée qu'une fois
 				if (fbxService.getStatus() == AsyncTask.Status.FINISHED) {
-					fbxService = new FreeboxDownloaderService(activity, dialog);
+					fbxService = new FreeboxDownloaderService(activity, dialog, fbxService.getUrlFreeboxAPI(), fbxService.getTrackId(), fbxService.getChallenge());
 				}
 				if (fbxService.getStatus() == AsyncTask.Status.PENDING) {
 //					if (NetworkTools.isConnectedViaWifi(activity)) {

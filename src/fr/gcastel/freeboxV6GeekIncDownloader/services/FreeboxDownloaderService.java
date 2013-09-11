@@ -87,13 +87,28 @@ public class FreeboxDownloaderService extends AsyncTask<String, Void, Void> {
   /**
    * Instanciation
    */
-  public FreeboxDownloaderService(Activity context, ProgressDialog inDialog) {
+  public FreeboxDownloaderService(Activity context, ProgressDialog inDialog, String urlFreeboxAPI, String trackId, String challenge) {
     zeActivity = context;
     dialog = inDialog;
+    this.urlFreeboxAPI = urlFreeboxAPI;
+    this.trackId = trackId;
+    this.challenge = challenge;
     dialogueEnCours = DialogEnCours.PROGRESS;
   }
 
-  private String loginFreebox(String password) throws UnsupportedEncodingException, ClientProtocolException, IOException {
+    public String getUrlFreeboxAPI() {
+        return urlFreeboxAPI;
+    }
+
+    public String getChallenge() {
+        return challenge;
+    }
+
+    public String getTrackId() {
+        return trackId;
+    }
+
+    private String loginFreebox(String password) throws UnsupportedEncodingException, ClientProtocolException, IOException {
     String cookieFbx = "";
     String csrfToken = "";
     
@@ -267,12 +282,13 @@ public class FreeboxDownloaderService extends AsyncTask<String, Void, Void> {
                     if (challenge == null) {
                         challenge = FreeboxAuthorization.askForChallenge(urlFreeboxAPI);
                     }
+                    Log.d("[FreeboxDownloaderService]", "Challenge dispo : " + challenge);
                 }
 
                 // Si on a tous les composants, on peut se loguer !
                 if ((appToken!= null) && (challenge != null)) {
                     Log.d("[FreeboxDownloaderService]", "On a tout pour se loguer");
-                    String sessionToken = FreeboxAuthorization.openSession(urlFreeboxAPI,appToken,challenge);
+                    String sessionToken = FreeboxAuthorization.openSession(zeActivity, urlFreeboxAPI,appToken,challenge);
                     Log.d("[FreeboxDownloaderService]", "Session token : " + sessionToken);
                 }
 
