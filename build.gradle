@@ -9,6 +9,7 @@ buildscript {
 apply plugin: 'android'
 
 dependencies {
+    compile files('libs/acra-4.5.0.jar')
     compile fileTree(dir: 'libs', include: '*.jar')
 }
 

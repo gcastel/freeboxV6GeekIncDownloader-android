@@ -19,7 +19,6 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.provider.Settings;
 import android.util.Log;
 
 import org.apache.http.client.methods.HttpGet;
@@ -219,6 +218,8 @@ public class FreeboxAuthorization {
             return null;
         }
     }
+
+
 
     /**
      * Calcule le hmac SHA1 pour l'authentification freebox

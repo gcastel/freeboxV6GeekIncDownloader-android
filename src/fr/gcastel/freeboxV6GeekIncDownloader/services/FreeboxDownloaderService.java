@@ -54,6 +54,7 @@ import android.widget.Toast;
 import fr.gcastel.freeboxV6GeekIncDownloader.R;
 import fr.gcastel.freeboxV6GeekIncDownloader.utils.FreeboxAuthorization;
 import fr.gcastel.freeboxV6GeekIncDownloader.utils.FreeboxDiscovery;
+import fr.gcastel.freeboxV6GeekIncDownloader.utils.FreeboxDownload;
 
 /**
  * Le service de téléchargement via freebox
@@ -108,79 +109,7 @@ public class FreeboxDownloaderService extends AsyncTask<String, Void, Void> {
         return trackId;
     }
 
-    private String loginFreebox(String password) throws UnsupportedEncodingException, ClientProtocolException, IOException {
-    String cookieFbx = "";
-    String csrfToken = "";
-    
-    // Préparation des paramètres
-    HttpPost postReq = new HttpPost(urlFreeboxAPI + "/login.php");
-    List<NameValuePair> parametres = new ArrayList<NameValuePair>();
-    parametres.add(new BasicNameValuePair("login", "freebox"));
-    parametres.add(new BasicNameValuePair("passwd", password));
-    postReq.setEntity(new UrlEncodedFormEntity(parametres));
-    
-    // Envoi de la requête
-    HttpParams httpParameters = new BasicHttpParams();
-    
-    // Mise en place de timeouts
-    int timeoutConnection = 5000;
-    HttpConnectionParams.setConnectionTimeout(httpParameters, timeoutConnection);
-    int timeoutSocket = 5000;
-    HttpConnectionParams.setSoTimeout(httpParameters, timeoutSocket);
-    
-    HttpClient httpclient = new DefaultHttpClient(httpParameters);
-    HttpParams params = httpclient.getParams();
-    HttpClientParams.setRedirecting(params, false); 
 
-    HttpResponse response= httpclient.execute(postReq);
-
-    // Ok ? (302 = moved = redirection)
-    if (response.getStatusLine().getStatusCode() == 302) {
-      Header cookie = response.getFirstHeader("Set-Cookie");
-      cookieFbx = cookie.getValue();
-      
-      // Extraction du cookie FBXSID
-      cookieFbx = cookieFbx.substring(cookieFbx.indexOf("FBXSID=\""), cookieFbx.indexOf("\";")+1);
-      Log.d(TAG, "Cookie = " + cookieFbx);
-    } else {
-      Log.d(TAG, "Erreur d'authentification - statusCode = " + response.getStatusLine().getStatusCode()  + " - reason = " + response.getStatusLine().getReasonPhrase());
-      prepareAlertDialog("Erreur d'authentification");
-    }
-    
-    // On a le cookie, il nous manque le csrf_token
-    // On récupère la page download !
-    HttpGet downloadPageReq = new HttpGet(urlFreeboxAPI + "/download.php");
-    downloadPageReq.setHeader("Cookie", "FBXSID=\"" + cookieFbx + "\";");
-    response = httpclient.execute(downloadPageReq);
-
-    // Ok ?
-    if (response.getStatusLine().getStatusCode() == 200) {
-      HttpEntity entity = response.getEntity();
-      InputStream contentStream = entity.getContent();
-      
-      BufferedReader br = new BufferedReader(new InputStreamReader(contentStream));
-      String line = br.readLine();
-      
-      while (line != null) {
-        if (line.contains("input type=\"hidden\" name=\"csrf_token\"")) {
-        	csrfToken = line.substring(line.indexOf("value=\"") + "value=\"".length(), line.lastIndexOf("\""));
-        	break;
-        }
-    	line = br.readLine();
-      }
-      
-      br.close();
-      contentStream.close();
-
-      Log.d(TAG, "csrfToken = " + csrfToken);
-    } else {
-      Log.d(TAG, "Erreur d'authentification - statusCode = " + response.getStatusLine().getStatusCode()  + " - reason = " + response.getStatusLine().getReasonPhrase());
-      prepareAlertDialog("Erreur d'authentification");
-    }
-
-    // C'est moche, mais ça me permet de corriger ça vite fait...
-    return cookieFbx+ "<-->" + csrfToken;
-  }
   
   private void prepareAlertDialog(String message) {
     dialogueEnCours = DialogEnCours.ALERT;
@@ -197,45 +126,6 @@ public class FreeboxDownloaderService extends AsyncTask<String, Void, Void> {
     });
     alertbox.show();
   }
-
-  
-  private void launchDownload(String cookieCSRF, String url) throws UnsupportedEncodingException, ClientProtocolException, IOException {
-    int splitPos = cookieCSRF.indexOf("<-->");
-	String cookie = cookieCSRF.substring(0, splitPos);
-	String csrfToken = cookieCSRF.substring(splitPos + 4);  
-	// Préparation des paramètres
-    HttpPost postReq = new HttpPost(urlFreeboxAPI + "/download.cgi");
-    List<NameValuePair> parametres = new ArrayList<NameValuePair>();
-    parametres.add(new BasicNameValuePair("url", url));
-    parametres.add(new BasicNameValuePair("user", "freebox"));
-    parametres.add(new BasicNameValuePair("method", "download.http_add"));
-    parametres.add(new BasicNameValuePair("csrf_token", csrfToken));
-    postReq.setEntity(new UrlEncodedFormEntity(parametres));
-    
-    // Mise en place des headers
-    postReq.setHeader("Cookie", cookie + ";");
-    postReq.setHeader("Referer", "http://mafreebox.freebox.fr/download.php");
-    
-    // Envoi de la requête
-    HttpParams httpParameters = new BasicHttpParams();
-    
-    // Mise en place de timeouts
-    HttpConnectionParams.setConnectionTimeout(httpParameters, 5000);
-    HttpConnectionParams.setSoTimeout(httpParameters, 5000);
-    HttpClient httpclient = new DefaultHttpClient(httpParameters);
-    HttpParams params = httpclient.getParams();
-    HttpClientParams.setRedirecting(params, false); 
-
-    HttpResponse response= httpclient.execute(postReq);
-
-    // Ok ? (302 = moved = redirection)
-    if (response.getStatusLine().getStatusCode() != 302) {
-      Log.d(TAG, "Erreur lors du lancement du téléchargement - statusCode = " + response.getStatusLine().getStatusCode()  + " - reason = " + response.getStatusLine().getReasonPhrase());
-      prepareAlertDialog("Erreur lors du lancement du téléchargement.");
-    }  	
-  }
-
-
     @Override
     protected Void doInBackground(String... params) {
         try {
@@ -286,20 +176,18 @@ public class FreeboxDownloaderService extends AsyncTask<String, Void, Void> {
                 }
 
                 // Si on a tous les composants, on peut se loguer !
-                if ((appToken!= null) && (challenge != null)) {
-                    Log.d("[FreeboxDownloaderService]", "On a tout pour se loguer");
-                    String sessionToken = FreeboxAuthorization.openSession(zeActivity, urlFreeboxAPI,appToken,challenge);
-                    Log.d("[FreeboxDownloaderService]", "Session token : " + sessionToken);
+                if (alertDialogMessage == null) {
+                    if ((appToken!= null) && (challenge != null)) {
+                        Log.d("[FreeboxDownloaderService]", "On a tout pour se loguer");
+                        String sessionToken = FreeboxAuthorization.openSession(zeActivity, urlFreeboxAPI,appToken,challenge);
+                        Log.d("[FreeboxDownloaderService]", "Session token : " + sessionToken);
+
+                        Log.d("[FreeboxDownloaderService]", "Lancement du download : " + params[0]);
+                        FreeboxDownload.launchDownload(urlFreeboxAPI,sessionToken,params[0]);
+                    }
+                } else {
+                    echec = true;
                 }
-
-                return null;
-
-//                String cookie = loginFreebox(params[1]);
-//                if (alertDialogMessage == null) {
-//                    launchDownload(cookie, params[0]);
-//                } else {
-//                    echec = true;
-//                }
             }
         } catch (Exception e) {
             Log.d("[FreeboxDownloaderService]", "Exception lors du traitement", e);
