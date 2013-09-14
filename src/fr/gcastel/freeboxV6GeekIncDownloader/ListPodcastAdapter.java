@@ -23,15 +23,11 @@ import fr.gcastel.freeboxV6GeekIncDownloader.services.FreeboxDownloaderService;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences.Editor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.os.AsyncTask;
 
@@ -76,43 +72,18 @@ public class ListPodcastAdapter extends BaseAdapter {
 	}
 
 	
-	private void askForPassword(final String url) {
-		LayoutInflater infalter = LayoutInflater.from(activity);
-		final View textEntryView = infalter.inflate(R.layout.password_dialog,
-				null);
+	private void askForConfirmation(final String title, final String url) {
 		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activity);
-		dialogBuilder.setTitle("Saisissez le mot de passe freebox");
-		dialogBuilder.setView(textEntryView);
-		
-		// Si disponible, initialiser le mot de passe
-		EditText passField = (EditText) textEntryView.findViewById(R.id.passwordField);
-		String prefPass = activity.getPreferences(Context.MODE_PRIVATE).getString(SAVED_PASSWORD_PREFERENCES_KEY, "");
-		passField.setText(prefPass);
-		if (!"".equals(prefPass)) {
-		  CheckBox chkBox = (CheckBox) textEntryView.findViewById(R.id.savePassCheckbox);
-		  chkBox.setChecked(true);
-		}
+		dialogBuilder.setTitle("Lancement du téléchargement ?");
+        dialogBuilder.setMessage("Lancer le téléchargement du " + title +" ?");
 
-		// Lien des événements		
-		
+		// Lien des événements
 		dialogBuilder.setPositiveButton("Ok",
 				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						EditText passField = (EditText) textEntryView.findViewById(R.id.passwordField);
-						String password = String.valueOf(passField.getText());
-						// Si l'enregistrement du password est demandé, on le fait
-						CheckBox chkBox = (CheckBox) textEntryView.findViewById(R.id.savePassCheckbox);
-						Editor editor = activity.getPreferences(Context.MODE_PRIVATE).edit();
-						if (chkBox.isChecked()) {
-						    editor.putString(SAVED_PASSWORD_PREFERENCES_KEY, password);
-						} else {
-							editor.remove(SAVED_PASSWORD_PREFERENCES_KEY);
-						}
-						editor.commit();
-						
 						if (fbxService.getStatus() == AsyncTask.Status.PENDING) {
-                                                  fbxService.execute(url, password);
+                                                  fbxService.execute(url);
 						}
 					}
 				});
@@ -147,7 +118,7 @@ public class ListPodcastAdapter extends BaseAdapter {
 				}
 				if (fbxService.getStatus() == AsyncTask.Status.PENDING) {
 //					if (NetworkTools.isConnectedViaWifi(activity)) {
-					  askForPassword(elements.get(position).getUrl());
+					  askForConfirmation(elements.get(position).getTitre(), elements.get(position).getUrl());
 //					} else {
 //			           Toast.makeText(activity, activity.getString(R.string.NeedWifiToDownload), Toast.LENGTH_SHORT).show();
 //					}
