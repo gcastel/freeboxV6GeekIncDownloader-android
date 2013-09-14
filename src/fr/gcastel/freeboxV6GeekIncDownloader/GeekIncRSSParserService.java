@@ -82,8 +82,13 @@ public class GeekIncRSSParserService {
       if (urlOrig.startsWith("http://www.podtrac.com/pts/")) {
       	url = urlOrig;
       } else {
-        int mediaUrlPos = urlOrig.indexOf("amp;media_url=") + "amp;media_url=".length();
-        url = urlOrig.substring(mediaUrlPos);
+        int indexOfMediaURL = urlOrig.indexOf("amp;media_url=");
+        if (indexOfMediaURL > 0) { 
+          int mediaUrlPos = indexOfMediaURL + "amp;media_url=".length();
+          url = urlOrig.substring(mediaUrlPos);
+        } else {
+          url = urlOrig;
+        }
       }
       
       // Recherche de la date de publication 
