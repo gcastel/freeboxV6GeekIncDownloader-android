@@ -52,7 +52,7 @@ public class FreeboxDownload {
             return false;
         }
 
-        String answer = NetworkTools.executeHTTPRequest("[FreeboxDownload]", postReq, null);
+        String answer = NetworkTools.executeHTTPRequest("[FreeboxDownload]", postReq, sessionToken);
         if (answer == null) {
             return false;
         }
