@@ -73,7 +73,7 @@ public class GeekIncRSSParserService {
       String titre = itemContent.substring(titlePos, endTitlePos);
       titre = titre.substring("Geek Inc HD ".length());
       
-      // Recherche de l'url de la vid�o
+      // Recherche de l'url de la vidéo
       int urlPos = itemContent.indexOf("<feedburner:origEnclosureLink>") + "<feedburner:origEnclosureLink>".length();
       int endUrlPos = itemContent.indexOf("</feedburner:origEnclosureLink>", urlPos);
 
