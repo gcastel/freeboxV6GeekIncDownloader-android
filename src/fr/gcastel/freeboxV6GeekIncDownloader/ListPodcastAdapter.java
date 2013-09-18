@@ -76,8 +76,8 @@ public class ListPodcastAdapter extends BaseAdapter {
 	
 	private void askForConfirmation(final String title, final String url) {
 		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activity);
-		dialogBuilder.setTitle("Lancement du téléchargement ?");
-        dialogBuilder.setMessage("Lancer le téléchargement du " + title +" ?");
+		dialogBuilder.setTitle(activity.getString(R.string.launchDownloadTitle));
+        dialogBuilder.setMessage(activity.getString(R.string.launchDownloadMsg) + title + " ?");
 
 		// Lien des événements
 		dialogBuilder.setPositiveButton("Ok",
