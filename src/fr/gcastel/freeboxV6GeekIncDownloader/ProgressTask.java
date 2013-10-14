@@ -28,8 +28,10 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import fr.gcastel.freeboxV6GeekIncDownloader.datas.PodcastElement;
 import fr.gcastel.freeboxV6GeekIncDownloader.services.GeekIncLogoDownloadService;
 
+import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -39,6 +41,7 @@ import android.widget.Toast;
  *  
  * @author Gerben
  */
+@TargetApi(Build.VERSION_CODES.CUPCAKE)
 public class ProgressTask extends AsyncTask<Void, Void, Void> {
   private GeekIncRssListActivity activity = null;
   private ProgressDialog dialog = null;
@@ -115,6 +118,9 @@ public class ProgressTask extends AsyncTask<Void, Void, Void> {
    */
   @Override
   protected Void doInBackground(Void... unused) {
+    if (activity == null) {
+        return (null);
+    }
 
     // Récupération du flux RSS
     try {

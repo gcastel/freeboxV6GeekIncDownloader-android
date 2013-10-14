@@ -19,8 +19,11 @@ import org.acra.ACRA;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
 
+import android.annotation.TargetApi;
 import android.app.Application;
+import android.os.Build;
 
+@TargetApi(Build.VERSION_CODES.BASE)
 @ReportsCrashes(formKey = "",
         formUri="http://applicationId.appspot.com/acrareport",
         formUriBasicAuthLogin = "user",

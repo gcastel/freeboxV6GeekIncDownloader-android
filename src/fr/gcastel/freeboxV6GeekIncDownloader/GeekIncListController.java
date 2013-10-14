@@ -6,12 +6,14 @@ import java.util.List;
 import fr.gcastel.freeboxV6GeekIncDownloader.datas.GeekIncListData;
 import fr.gcastel.freeboxV6GeekIncDownloader.datas.PodcastElement;
 
+import android.annotation.TargetApi;
 import android.app.ProgressDialog;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
 
-
+@TargetApi(Build.VERSION_CODES.CUPCAKE)
 public class GeekIncListController {
 	private final GeekIncListData listData  = new GeekIncListData(); 
 	
@@ -74,7 +76,11 @@ public class GeekIncListController {
   
   private void instantiateAndShowProgressDialog(GeekIncRssListActivity activity, int progress) {
   	if (listData.getDialog() != null) {
-  		listData.getDialog().dismiss();
+        try {
+  		    listData.getDialog().dismiss();
+        } catch (Exception e) {
+            // RAS : le dismiss a potentiellement eu lieu sur une vue détachée
+        }
   	}
 	  
 	ProgressDialog dialog = new ProgressDialog(activity);
