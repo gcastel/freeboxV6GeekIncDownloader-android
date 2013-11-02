@@ -61,7 +61,7 @@ public class FreeboxDiscovery {
 
                 urlFreebox = "http://mafreebox.freebox.fr" +
                         jObject.getString("api_base_url") +
-                        "v" + jObject.getString("api_version").replace(".0","");
+                        "v" + jObject.getString("api_version").replaceAll("\\..*","");
             } catch (JSONException e) {
                 Log.e("[FreeboxDiscovery]", "Erreur de parsing JSON: ",e);
                 return null;
