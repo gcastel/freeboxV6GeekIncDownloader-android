@@ -134,6 +134,9 @@ public class ListPodcastAdapter extends BaseAdapter {
 
 	@Override
 	public boolean isEmpty() {
+		if (elements == null) {
+			return true;
+		}
 		return elements.isEmpty();
 	}
 
